@@ -7,7 +7,16 @@
 
 ## Project Description
 
-GitHub Profile Explorer is a Python-based web application that allows users to view detailed information about any public GitHub account. It combines the GitHub API with web scraping techniques to gather both official and visual profile data. The application displays user information, repositories, and activity insights in a clean and organized layout. Flask is used to create a browser-based interface for interaction. The goal is to offer a more complete view of a user's GitHub presence than the API alone provides.
+### 📘 Project Description
+
+**GitHub Profile Explorer** built with Python gives users access to detailed information for visible GitHub profiles through visual presentations. Through its usage of the official [GitHub REST API](https://docs.github.com/en/rest) this application gains access to retrieve essential data which includes user profile information and public repository details. The application enhances user experience by utilizing web scraping methods to gather additional information which the API fails to disclose such as pinned repositories and contribution graphs alongside recent public profiles events.
+
+The application presents this data in a clean, responsive layout through a Flask-powered web interface. Users can search for any GitHub username, view the profile's avatar, name, bio, location, and GitHub statistics, and explore a list of public repositories with options to:
+
+- Sort by stars or last update date
+- Filter by language or repository name
+
+Web-scraped content like contribution graphs and activity feeds offers further insight into the user’s coding behavior and public involvement
 
 ## Project Outline / Plan
 
