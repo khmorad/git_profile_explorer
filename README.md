@@ -1,5 +1,7 @@
 # GitHub Profile Explorer
 
+  <img src="./assets/logo.png" alt="GitHub Profile Explorer Logo" width="400"/>
+
 ## Authors
 
 - Author #1: Yar Moradpour
@@ -7,7 +9,7 @@
 
 ## Project Description
 
-### 📘 Project Description
+### Project Description
 
 **GitHub Profile Explorer** built with Python gives users access to detailed information for visible GitHub profiles through visual presentations. Through its usage of the official [GitHub REST API](https://docs.github.com/en/rest) this application gains access to retrieve essential data which includes user profile information and public repository details. The application enhances user experience by utilizing web scraping methods to gather additional information which the API fails to disclose such as pinned repositories and contribution graphs alongside recent public profiles events.
 
