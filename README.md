@@ -48,7 +48,7 @@ GitHub user data is collected from the GitHub REST API using the `requests` libr
 
 Data analysis includes sorting repositories by popularity (star count) and activity (last updated date). Repository languages and star distribution may also be summarized. Visualization components can include charts for top languages or activity over time, using libraries like `matplotlib` or `plotly`. The contribution graph, extracted from the user’s profile page, provides a visual summary of commit activity over the past year.
 
-## Project Sprit Plan
+## Project Sprint Plan
 
 | Sprint | Dates           | Task(s)                                                                                   | Status      |
 | ------ | --------------- | ----------------------------------------------------------------------------------------- | ----------- |
