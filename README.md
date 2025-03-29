@@ -46,7 +46,27 @@ GitHub user data is collected from the GitHub REST API using the `requests` libr
 
 ## Data Analysis and Visualization Plan
 
-Data analysis includes sorting repositories by popularity (star count) and activity (last updated date). Repository languages and star distribution may also be summarized. Visualization components can include charts for top languages or activity over time, using libraries like `matplotlib` or `plotly`. The contribution graph, extracted from the user’s profile page, provides a visual summary of commit activity over the past year.
+### Data Analysis
+
+For the data analysis, we will perform Exploratory Data Analysis on the information of repositories/personal of user:
+- The strengths of user (programming language proficiency, commit patterns (does user know about common practice of 
+GitHub commit?))
+- The activeness of user (amount of following accounts, commit history, star distribution)
+- Profile score: Evaluate how well the user have set up there account using the metrics from the strengths analysis and 
+activeness analysis above. If time permits, we will pre-compute this metric on a set of users and evaluate the effectiveness
+of the metric.
+
+### Data Visualization
+
+The main objective of this project is to crawl user information and display it in a more interactive and story-telling
+way. Our aim is to have user a tool to display their GitHub profile in a way that will catch the eyes of the HR people.
+And also display the results from the analysis methods above to help user improve their profile.
+
+In genera, we will design a pre-format website that when user connect their GitHub profile (entering the link), we will 
+display the summary of their profile according to the design and also use Plotly to plot the metrics:
+- Line/Bar charts for commit history
+- Interactive bar charts for programming language proficiency
+
 
 ## Project Sprint Plan
 
