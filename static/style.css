@@ -1,0 +1,190 @@
+body.dark {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background-color: #0d1014;
+  color: #c9d1d9;
+}
+
+.app-container {
+  display: flex;
+  height: 100vh;
+}
+
+/* all styling for sidebar */
+
+.card-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap; /* so they stack on small screens */
+}
+
+.card {
+  flex: 1;
+  min-width: 300px;
+}
+
+.sidebar {
+  min-width: 300px;
+  background-color: #12171c;
+  padding: 20px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar h2.username {
+  color: #144986;
+  margin-bottom: 20px;
+}
+
+.sidebar h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #30363d;
+  padding-bottom: 5px;
+}
+
+.repo-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.repo-list li {
+  margin-bottom: 8px;
+  padding: 5px 0;
+  color: #8b949e;
+  border-bottom: 1px solid #21262d;
+}
+
+/* main dashboard area of the page  */
+.main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+header h1 {
+  font-size: 24px;
+  color: #144986;
+}
+
+header form {
+  display: flex;
+  gap: 10px;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 10px;
+  background-color: #161b22;
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+  border-radius: 6px;
+}
+
+button {
+  background-color: #238636;
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: #2ea043;
+}
+
+.profile-data {
+  margin-top: 40px;
+}
+
+.card {
+  background-color: #0d1014;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.profile img {
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px solid #2f81f7;
+  margin-bottom: 10px;
+}
+
+.name {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.username {
+  color: #8b949e;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.bio {
+  font-style: italic;
+  color: #c9d1d9;
+  margin-bottom: 15px;
+}
+
+.details {
+  font-size: 13px;
+  color: #8b949e;
+  margin-bottom: 20px;
+}
+
+.details a {
+  color: #58a6ff;
+  text-decoration: none;
+}
+
+.details a:hover {
+  text-decoration: underline;
+}
+
+.badges h4,
+.highlights h4 {
+  font-size: 14px;
+  margin: 10px 0 5px;
+  color: #c9d1d9;
+}
+
+.badge-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.badge-row img {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+}
+
+.badge {
+  display: inline-block;
+  background-color: #ffd33d;
+  color: #1f1f1f;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}

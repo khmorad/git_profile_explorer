@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>GitHub Profile Explorer</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dark">
+    <div class="app-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="profile">
+          <div class="profile-pic">
+            <img
+              src="https://avatars1.githubusercontent.com/u/9919?v=4"
+              alt="Avatar"
+              class="avatar"
+            />
+          </div>
+          <h2 class="name">Khashayar Moradpour</h2>
+          <p class="username">@khmorad</p>
+          <p class="bio">Full Stack Developer, 3rd year at SJSU</p>
+
+          <div class="details">
+            <p>
+              <i class="fa-solid fa-location-dot"></i> San Jose State University
+            </p>
+            <p>
+              <i class="fa-brands fa-linkedin"></i>
+              <a href="https://linkedin.com/in/kmoradpour" target="_blank"
+                >in/kmoradpour</a
+              >
+            </p>
+            <p>
+              <i class="fa-solid fa-link"></i>
+              <a href="https://khashayarmoradpour.com" target="_blank"
+                >Website</a
+              >
+            </p>
+          </div>
+
+          <div class="badges">
+            <h4>Achievements</h4>
+            <div class="badge-row">
+              <img
+                src="https://github.githubassets.com/images/modules/profile/achievements/arctic-code-vault-contributor-default.png"
+                alt="Achievement 1"
+              />
+              <img
+                src="https://github.githubassets.com/images/modules/profile/achievements/pull-shark-default.png"
+                alt="Achievement 2"
+              />
+              <img
+                src="https://github.githubassets.com/images/modules/profile/achievements/yolo-default.png"
+                alt="Achievement 3"
+              />
+            </div>
+          </div>
+
+          <div class="highlights">
+            <h4>Highlights</h4>
+            <span class="badge">PRO</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Dashboard -->
+      <main class="main">
+        <header>
+          <h1>GitHub Profile Explorer</h1>
+          <form method="POST">
+            <input
+              type="text"
+              name="username"
+              placeholder="Enter GitHub username"
+              required
+            />
+            <button type="submit">Search</button>
+          </form>
+        </header>
+
+        {% if user_data %}
+        <section class="profile-data">
+          <h2>Profile Info</h2>
+          <div class="card-container">
+            <div class="card">
+              <canvas id="langChart" width="400" height="200"></canvas>
+            </div>
+            <div class="card">
+              <p><strong>Username:</strong> {{ user_data.username }}</p>
+              <p><strong>Name:</strong> {{ user_data.name }}</p>
+              <p><strong>Bio:</strong> {{ user_data.bio }}</p>
+              <p><strong>Location:</strong> {{ user_data.location }}</p>
+              <p>
+                <strong>Public Repositories:</strong> {{ user_data.public_repos
+                }}
+              </p>
+            </div>
+            <div class="card">
+              <p><strong>Username:</strong> {{ user_data.username }}</p>
+              <p><strong>Name:</strong> {{ user_data.name }}</p>
+              <p><strong>Bio:</strong> {{ user_data.bio }}</p>
+              <p><strong>Location:</strong> {{ user_data.location }}</p>
+              <p>
+                <strong>Public Repositories:</strong> {{ user_data.public_repos
+                }}
+              </p>
+            </div>
+            <div class="card">
+              <p><strong>Username:</strong> {{ user_data.username }}</p>
+              <p><strong>Name:</strong> {{ user_data.name }}</p>
+              <p><strong>Bio:</strong> {{ user_data.bio }}</p>
+              <p><strong>Location:</strong> {{ user_data.location }}</p>
+              <p>
+                <strong>Public Repositories:</strong> {{ user_data.public_repos
+                }}
+              </p>
+            </div>
+            <div class="card">
+              <p><strong>Username:</strong> {{ user_data.username }}</p>
+              <p><strong>Name:</strong> {{ user_data.name }}</p>
+              <p><strong>Bio:</strong> {{ user_data.bio }}</p>
+              <p><strong>Location:</strong> {{ user_data.location }}</p>
+              <p>
+                <strong>Public Repositories:</strong> {{ user_data.public_repos
+                }}
+              </p>
+            </div>
+            <div class="card">
+              <p><strong>Username:</strong> {{ user_data.username }}</p>
+              <p><strong>Name:</strong> {{ user_data.name }}</p>
+              <p><strong>Bio:</strong> {{ user_data.bio }}</p>
+              <p><strong>Location:</strong> {{ user_data.location }}</p>
+              <p>
+                <strong>Public Repositories:</strong> {{ user_data.public_repos
+                }}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {% endif %}
+      </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    {% if languages %}
+    <script>
+      const ctx = document.getElementById('langChart').getContext('2d');
+      const langChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: {{ languages.keys()|list|tojson }},
+          datasets: [{
+            label: 'Repos by Language',
+            data: {{ languages.values()|list|tojson }},
+            backgroundColor: 'rgba(54, 162, 235, 0.7)'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    </script>
+    {% endif %}
+  </body>
+</html>
