@@ -86,21 +86,6 @@ input[type="text"] {
   border-radius: 6px;
 }
 
-button {
-  background-color: #238636;
-  border: none;
-  padding: 10px 20px;
-  color: white;
-  font-weight: 600;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-button:hover {
-  background-color: #2ea043;
-}
-
 .profile-data {
   margin-top: 40px;
 }
@@ -187,4 +172,144 @@ button:hover {
   border-radius: 20px;
   font-size: 12px;
   font-weight: bold;
+}
+
+@media (max-width: 968px) {
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+.repo-list {
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 5px;
+  margin-top: 10px;
+}
+
+/* Only apply this scroll style to this container */
+.repo-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.repo-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.repo-list::-webkit-scrollbar-thumb {
+  background-color: #444;
+  border-radius: 8px;
+}
+
+.repo-list::-webkit-scrollbar-thumb:hover {
+  background-color: #666;
+}
+
+/* Firefox scrollbar */
+.repo-list {
+  scrollbar-color: #444 transparent;
+  scrollbar-width: thin;
+}
+
+/* Styling for repo list itself */
+.repo-ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
+}
+
+.repo-ul li {
+  padding: 8px 10px;
+  border-bottom: 1px solid #333;
+  transition: background-color 0.2s ease;
+}
+
+.repo-ul li:last-child {
+  border-bottom: none;
+}
+
+.repo-ul li:hover {
+  background-color: #2a2a2a;
+}
+
+.repo-ul li a {
+  color: #9ecbff;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.repo-ul li a:hover {
+  color: #ffffff;
+}
+
+.button-64 {
+  all: unset;
+  width: 100px;
+  height: 30px;
+  font-size: 16px;
+  background: transparent;
+  border: none;
+  position: relative;
+  color: #f0f0f0;
+  cursor: pointer;
+  z-index: 1;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-64::after,
+.button-64::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: -99999;
+  transition: all 0.4s;
+}
+
+.button-64::before {
+  transform: translate(0%, 0%);
+  width: 100%;
+  height: 100%;
+  background: #28282d;
+  border-radius: 10px;
+}
+
+.button-64::after {
+  transform: translate(10px, 10px);
+  width: 35px;
+  height: 35px;
+  background: #ffffff15;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: 50px;
+}
+
+.button-64:hover::before {
+  transform: translate(5%, 20%);
+  width: 110%;
+  height: 110%;
+}
+
+.button-64:hover::after {
+  border-radius: 10px;
+  transform: translate(0, 0);
+  width: 100%;
+  height: 100%;
+}
+
+.button-64:active::after {
+  transition: 0s;
+  transform: translate(0, 5%);
 }

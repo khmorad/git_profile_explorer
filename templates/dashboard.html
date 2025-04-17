@@ -8,6 +8,10 @@
       href="{{ url_for('static', filename='style.css') }}"
     />
     <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
       rel="stylesheet"
     />
@@ -82,7 +86,12 @@
               placeholder="Enter GitHub username"
               required
             />
-            <button type="submit">Search</button>
+
+            <button class="button-64" role="button" type="submit">
+              <span class="text"
+                ><i class="fa-solid fa-magnifying-glass"></i
+              ></span>
+            </button>
           </form>
         </header>
 
@@ -91,17 +100,29 @@
           <h2>Profile Info</h2>
           <div class="card-container">
             <div class="card">
-              <canvas id="langChart" width="400" height="200"></canvas>
+              <h3>Repositories</h3>
+              {% if repos %}
+              <div class="repo-list">
+                <ul class="repo-ul">
+                  {% for repo in repos %}
+                  <li>
+                    <a
+                      href="https://github.com/{{ user_data.username }}/{{ repo }}"
+                      target="_blank"
+                    >
+                      {{ repo }}
+                    </a>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+              {% else %}
+              <p>No repositories found.</p>
+              {% endif %}
             </div>
             <div class="card">
-              <p><strong>Username:</strong> {{ user_data.username }}</p>
-              <p><strong>Name:</strong> {{ user_data.name }}</p>
-              <p><strong>Bio:</strong> {{ user_data.bio }}</p>
-              <p><strong>Location:</strong> {{ user_data.location }}</p>
-              <p>
-                <strong>Public Repositories:</strong> {{ user_data.public_repos
-                }}
-              </p>
+              <h3>Tech Stack</h3>
+              <canvas id="langChart" width="400" height="200"></canvas>
             </div>
             <div class="card">
               <p><strong>Username:</strong> {{ user_data.username }}</p>
