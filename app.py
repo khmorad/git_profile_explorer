@@ -3,7 +3,7 @@ import requests
 from dotenv import load_dotenv
 import os
 from functools import lru_cache
-
+from datetime import datetime, timedelta
 load_dotenv()
 token = os.getenv("git_hub_project")
 print(token)
@@ -38,7 +38,47 @@ def getUserTechStack(username):
         langs[key] = sum(values)
     sorted_langs = dict(sorted(langs.items(), key=lambda item: item[1], reverse=True))
     return sorted_langs
-        
+
+def get_monthly_commits(username):
+    headers = {"Authorization": token}
+    repos_url = f"https://api.github.com/users/{username}/repos"
+    repos_response = requests.get(repos_url, headers=headers)
+    repos = repos_response.json()
+
+    monthly_commits = {}
+    today = datetime.now()
+    one_year_ago = today - timedelta(days=365)
+
+    for repo in repos:
+        commits_url = f"https://api.github.com/repos/{username}/{repo['name']}/commits?since={one_year_ago.isoformat()}"
+        while commits_url:
+            commits_response = requests.get(commits_url, headers=headers)
+            if commits_response.status_code == 200:
+                commits = commits_response.json()
+                for commit_data in commits:
+                    commit_date = datetime.strptime(commit_data['commit']['author']['date'], '%Y-%m-%dT%H:%M:%SZ')
+                    if commit_date >= one_year_ago:
+                        month_year = commit_date.strftime('%Y-%m')
+                        monthly_commits[month_year] = monthly_commits.get(month_year, 0) + 1
+                if 'Link' in commits_response.headers:
+                    links = commits_response.headers['Link'].split(',')
+                    next_link = None
+                    for link in links:
+                        if 'rel="next"' in link:
+                            next_link = link.split(';')[0].strip('<>')
+                            break
+                    commits_url = next_link
+                else:
+                    commits_url = None
+            else:
+                print(f"Error fetching commits for {repo['name']}: {commits_response.status_code}")
+                commits_url = None
+                break  
+
+    sorted_monthly_commits = dict(sorted(monthly_commits.items()))
+    return sorted_monthly_commits
+
+    
 def show_users_repo_names(user):
     headers = {"Authorization": token}
     repourl = f"https://api.github.com/users/{user}/repos"
@@ -57,10 +97,11 @@ def dashboard():
     user_data = None
     languages = None
     repos = []
+    monthly_commits = None
     if request.method == 'POST':
         username = request.form['username']
         
-        # Fetch actual user data from GitHub (optional – your current data is placeholder)
+        
         user_info_url = f"https://api.github.com/users/{username}"
         headers = {"Authorization": token}
         user_info_response = requests.get(user_info_url, headers=headers)
@@ -76,11 +117,13 @@ def dashboard():
             }
             languages = dict(list(getUserTechStack(username).items())[:5])
             repos = show_users_repo_names(username)
+            monthly_commits = get_monthly_commits(username)
+
         else:
             user_data = {"username": username, "name": "Not Found"}
             repos = []
 
-    return render_template('dashboard.html', user_data=user_data, languages=languages, repos=repos)
+    return render_template('dashboard.html', user_data=user_data, languages=languages, repos=repos,  monthly_commits=monthly_commits)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -50,11 +50,23 @@ body.dark {
 
 .app-container {
   display: flex;
-  height: 100vh;
+  flex-grow: 1;
+  min-height: calc(100vh - 70px);
+  overflow: hidden;
+}
+/* `````sidebar ``````*/
+body,
+html {
+  overflow-x: hidden;
 }
 
-/* all styling for sidebar */
+.app-container {
+  overflow-x: hidden; /* prevents children from expanding too wide */
+}
 
+.main {
+  overflow-x: hidden; /* make sure no content in main overflows horizontally */
+}
 .card-container {
   display: flex;
   gap: 20px;
@@ -67,7 +79,9 @@ body.dark {
 }
 
 .sidebar {
-  min-width: 300px;
+  min-width: 100px;
+  max-width: 300px;
+
   background-color: #12171c;
   padding: 20px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
