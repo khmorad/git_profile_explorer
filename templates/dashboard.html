@@ -21,57 +21,39 @@
       <!-- Sidebar -->
       <aside class="sidebar">
         <div class="profile">
+          {% if user_data %}
           <div class="profile-pic">
             <img
-              src="https://avatars1.githubusercontent.com/u/9919?v=4"
+              src="{{ user_data.porfile_pic }}"
               alt="Avatar"
               class="avatar"
             />
           </div>
-          <h2 class="name">Khashayar Moradpour</h2>
-          <p class="username">@khmorad</p>
-          <p class="bio">Full Stack Developer, 3rd year at SJSU</p>
+          <div class="user-info">
+            <h2 class="name">{{ user_data.name }}</h2>
+            <p class="username">@{{ user_data.username }}</p>
+            <p class="bio">{{ user_data.bio }}</p>
 
-          <div class="details">
-            <p>
-              <i class="fa-solid fa-location-dot"></i> San Jose State University
-            </p>
-            <p>
-              <i class="fa-brands fa-linkedin"></i>
-              <a href="https://linkedin.com/in/kmoradpour" target="_blank"
-                >in/kmoradpour</a
-              >
-            </p>
-            <p>
-              <i class="fa-solid fa-link"></i>
-              <a href="https://khashayarmoradpour.com" target="_blank"
-                >Website</a
-              >
-            </p>
-          </div>
-
-          <div class="badges">
-            <h4>Achievements</h4>
-            <div class="badge-row">
-              <img
-                src="https://github.githubassets.com/images/modules/profile/achievements/arctic-code-vault-contributor-default.png"
-                alt="Achievement 1"
-              />
-              <img
-                src="https://github.githubassets.com/images/modules/profile/achievements/pull-shark-default.png"
-                alt="Achievement 2"
-              />
-              <img
-                src="https://github.githubassets.com/images/modules/profile/achievements/yolo-default.png"
-                alt="Achievement 3"
-              />
+            <div class="details">
+              <p>
+                <i class="fa-solid fa-location-dot"></i> San Jose State
+                University
+              </p>
+              <p>
+                <i class="fa-brands fa-linkedin"></i>
+                <a href="https://linkedin.com/in/kmoradpour" target="_blank"
+                  >in/kmoradpour</a
+                >
+              </p>
+              <p>
+                <i class="fa-solid fa-link"></i>
+                <a href="https://khashayarmoradpour.com" target="_blank"
+                  >Website</a
+                >
+              </p>
             </div>
           </div>
-
-          <div class="highlights">
-            <h4>Highlights</h4>
-            <span class="badge">PRO</span>
-          </div>
+          {% endif %}
         </div>
       </aside>
 

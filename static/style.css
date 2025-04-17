@@ -27,7 +27,7 @@ body.dark {
   min-width: 300px;
   background-color: #12171c;
   padding: 20px;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 .sidebar h2.username {
@@ -40,6 +40,10 @@ body.dark {
   margin-bottom: 10px;
   border-bottom: 1px solid #30363d;
   padding-bottom: 5px;
+}
+
+.user-info {
+  padding: 20px;
 }
 
 .repo-list {
@@ -75,6 +79,8 @@ header h1 {
 header form {
   display: flex;
   gap: 10px;
+  max-width: 900px;
+  justify-content: center;
 }
 
 input[type="text"] {

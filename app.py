@@ -17,6 +17,7 @@ def getUserTechStack(username):
     # response = requests.get(url, headers=headers)
     
     #fetch users repo info
+    print(requests.get("https://api.github.com/users/khmorad"))
     github_response_repo = requests.get(repo_url, headers=headers)
     github_response_repo = github_response_repo.json()
     
@@ -70,7 +71,8 @@ def dashboard():
                 "name": user_info.get("name"),
                 "bio": user_info.get("bio"),
                 "location": user_info.get("location"),
-                "public_repos": user_info.get("public_repos")
+                "public_repos": user_info.get("public_repos"),
+                "porfile_pic": user_info.get("avatar_url")
             }
             languages = dict(list(getUserTechStack(username).items())[:5])
             repos = show_users_repo_names(username)
