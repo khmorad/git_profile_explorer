@@ -6,7 +6,7 @@ from functools import lru_cache
 
 load_dotenv()
 token = os.getenv("git_hub_project")
-
+print(token)
 
 @lru_cache(maxsize=128)
 def getUserTechStack(username):
@@ -55,7 +55,7 @@ app = Flask(__name__)
 def dashboard():
     user_data = None
     languages = None
-
+    repos = []
     if request.method == 'POST':
         username = request.form['username']
         
@@ -76,6 +76,7 @@ def dashboard():
             repos = show_users_repo_names(username)
         else:
             user_data = {"username": username, "name": "Not Found"}
+            repos = []
 
     return render_template('dashboard.html', user_data=user_data, languages=languages, repos=repos)
 
