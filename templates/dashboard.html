@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>GitHub Profile Explorer</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dark">
+    <nav class="navbar">
+      <div class="nav-content">
+        <div class="nav-left">
+          <i class="fa-brands fa-github"></i>
+          <span class="nav-title">GitHub Profile Explorer</span>
+        </div>
+      </div>
+    </nav>
+    <div class="app-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="profile">
+          {% if user_data %}
+          <div class="profile-pic">
+            <img
+              src="{{ user_data.porfile_pic }}"
+              alt="Avatar"
+              class="avatar"
+            />
+          </div>
+          <div class="user-info">
+            <h2 class="name">{{ user_data.name }}</h2>
+            <p class="username">@{{ user_data.username }}</p>
+            <p class="bio">{{ user_data.bio }}</p>
+
+            <div class="details">
+              <p>
+                <i class="fa-solid fa-location-dot"></i> San Jose State
+                University
+              </p>
+              <p>
+                <i class="fa-brands fa-linkedin"></i>
+                <a href="https://linkedin.com/in/kmoradpour" target="_blank"
+                  >in/kmoradpour</a
+                >
+              </p>
+              <p>
+                <i class="fa-solid fa-link"></i>
+                <a href="https://khashayarmoradpour.com" target="_blank"
+                  >Website</a
+                >
+              </p>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </aside>
+
+      <!-- Main Dashboard -->
+      <main class="main">
+        <header>
+          <h1>GitHub Profile Explorer</h1>
+          <form method="POST">
+            <input
+              type="text"
+              name="username"
+              placeholder="Enter GitHub username"
+              required
+            />
+
+            <button class="button-64" role="button" type="submit">
+              <span class="text"
+                ><i class="fa-solid fa-magnifying-glass"></i
+              ></span>
+            </button>
+          </form>
+        </header>
+
+        {% if user_data %}
+        <section class="profile-data">
+          <h2>Profile Info</h2>
+          <div class="card-container">
+            <div class="card">
+              <h3>Repositories</h3>
+              {% if repos %}
+              <div class="repo-list">
+                <ul class="repo-ul">
+                  {% for repo in repos %}
+                  <li>
+                    <a
+                      href="https://github.com/{{ user_data.username }}/{{ repo }}"
+                      target="_blank"
+                    >
+                      {{ repo }}
+                    </a>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+              {% else %}
+              <p>No repositories found.</p>
+              {% endif %}
+            </div>
+            <div class="card">
+              <h3>Tech Stack</h3>
+              <canvas id="langChart" width="400" height="200"></canvas>
+            </div>
+            <div class="card">
+              <p><strong>Username:</strong> {{ user_data.username }}</p>
+              <p><strong>Name:</strong> {{ user_data.name }}</p>
+              <p><strong>Bio:</strong> {{ user_data.bio }}</p>
+              <p><strong>Location:</strong> {{ user_data.location }}</p>
+              <p>
+                <strong>Public Repositories:</strong> {{ user_data.public_repos
+                }}
+              </p>
+            </div>
+            <div class="card">
+              <p><strong>Username:</strong> {{ user_data.username }}</p>
+              <p><strong>Name:</strong> {{ user_data.name }}</p>
+              <p><strong>Bio:</strong> {{ user_data.bio }}</p>
+              <p><strong>Location:</strong> {{ user_data.location }}</p>
+              <p>
+                <strong>Public Repositories:</strong> {{ user_data.public_repos
+                }}
+              </p>
+            </div>
+            <div class="card">
+              <p><strong>Username:</strong> {{ user_data.username }}</p>
+              <p><strong>Name:</strong> {{ user_data.name }}</p>
+              <p><strong>Bio:</strong> {{ user_data.bio }}</p>
+              <p><strong>Location:</strong> {{ user_data.location }}</p>
+              <p>
+                <strong>Public Repositories:</strong> {{ user_data.public_repos
+                }}
+              </p>
+            </div>
+            <div class="card">
+              <p><strong>Username:</strong> {{ user_data.username }}</p>
+              <p><strong>Name:</strong> {{ user_data.name }}</p>
+              <p><strong>Bio:</strong> {{ user_data.bio }}</p>
+              <p><strong>Location:</strong> {{ user_data.location }}</p>
+              <p>
+                <strong>Public Repositories:</strong> {{ user_data.public_repos
+                }}
+              </p>
+            </div>
+          </div>
+          <div class="contribution-card">
+            <h3>Contribution Activity (Last Year)</h3>
+            <div id="github-calendar"></div>
+          </div>
+        </section>
+
+        {% endif %}
+      </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/github-calendar@2.1.3/dist/github-calendar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% if user_data and contribution_data %}
+    <script>
+      const contributionData = {{ contribution_data|tojson }};
+      const calendarContainer = document.querySelector("#github-calendar");
+
+      // Process the contribution data into the format expected by github-calendar
+      const contributionsByDate = {};
+      if (contributionData && contributionData.weeks) {
+          contributionData.weeks.forEach(week => {
+              week.contributionDays.forEach(day => {
+                  contributionsByDate[day.date] = day.contributionCount;
+              });
+          });
+      }
+
+      GitHubCalendar(calendarContainer, "{{ user_data.username }}", {
+          data: contributionsByDate,
+          tooltips: true,
+          responsive: true,
+          theme: 'dark' // Assuming your site is dark themed
+      });
+    </script>
+    {% elif user_data %}
+    <div class="contribution-card">
+      <h3>Contribution Activity (Last Year)</h3>
+      <p>Contribution data could not be loaded for a visual calendar.</p>
+      {% if contribution_data %}
+      <p>
+        <strong>Total Contributions:</strong> {{
+        contribution_data.totalContributions }}
+      </p>
+      {% endif %}
+    </div>
+    {% endif %} {% if languages %}
+    <script>
+      const ctx = document.getElementById('langChart').getContext('2d');
+      const langChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: {{ languages.keys()|list|tojson }},
+          datasets: [{
+            label: 'Repos by Language',
+            data: {{ languages.values()|list|tojson }},
+            backgroundColor: 'rgba(54, 162, 235, 0.7)'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    </script>
+    {% endif %}
+  </body>
+</html>
