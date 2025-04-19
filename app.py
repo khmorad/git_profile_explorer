@@ -39,6 +39,7 @@ def getUserTechStack(username):
     sorted_langs = dict(sorted(langs.items(), key=lambda item: item[1], reverse=True))
     return sorted_langs
 
+@lru_cache(maxsize=128)
 def get_monthly_commits(username):
     headers = {"Authorization": token}
     repos_url = f"https://api.github.com/users/{username}/repos"
@@ -78,7 +79,7 @@ def get_monthly_commits(username):
     sorted_monthly_commits = dict(sorted(monthly_commits.items()))
     return sorted_monthly_commits
 
-    
+@lru_cache(maxsize=128)    
 def show_users_repo_names(user):
     headers = {"Authorization": token}
     repourl = f"https://api.github.com/users/{user}/repos"

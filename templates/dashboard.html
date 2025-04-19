@@ -89,6 +89,16 @@
         <section class="profile-data">
           <h2>Profile Info</h2>
           <div class="card-container">
+   
+            <div class="card">
+              <h3>Tech Stack</h3>
+              <div style="width: 220px; height: 220px; margin: auto;">
+                <canvas id="langChart"></canvas>
+              </div>            </div>
+            <div class="card">
+              <h3>Monthly Commits</h3>
+              <canvas id="commitChart" width="400" height="200"></canvas>
+            </div>
             <div class="card">
               <h3>Repositories</h3>
               {% if repos %}
@@ -111,10 +121,6 @@
               {% endif %}
             </div>
             <div class="card">
-              <h3>Tech Stack</h3>
-              <canvas id="langChart" width="400" height="200"></canvas>
-            </div>
-            <div class="card">
               <p><strong>Username:</strong> {{ user_data.username }}</p>
               <p><strong>Name:</strong> {{ user_data.name }}</p>
               <p><strong>Bio:</strong> {{ user_data.bio }}</p>
@@ -154,10 +160,6 @@
                 }}
               </p>
             </div>
-          </div>
-          <div class="contribution-card">
-            <h3>Contribution Activity (Last Year)</h3>
-            <div id="github-calendar"></div>
           </div>
         </section>
 
@@ -189,40 +191,103 @@
           theme: 'dark' // Assuming your site is dark themed
       });
     </script>
-    {% elif user_data %}
-    <div class="contribution-card">
-      <h3>Contribution Activity (Last Year)</h3>
-      <p>Contribution data could not be loaded for a visual calendar.</p>
-      {% if contribution_data %}
-      <p>
-        <strong>Total Contributions:</strong> {{
-        contribution_data.totalContributions }}
-      </p>
-      {% endif %}
+
     </div>
     {% endif %} {% if languages %}
     <script>
       const ctx = document.getElementById('langChart').getContext('2d');
       const langChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'doughnut',
         data: {
           labels: {{ languages.keys()|list|tojson }},
           datasets: [{
             label: 'Repos by Language',
             data: {{ languages.values()|list|tojson }},
-            backgroundColor: 'rgba(54, 162, 235, 0.7)'
+            backgroundColor: [    'rgba(10, 25, 47, 0.9)',
+  'rgba(14, 36, 71, 0.85)',
+  'rgba(18, 49, 97, 0.8)',
+  'rgba(21, 61, 122, 0.75)',
+  'rgba(26, 80, 160, 0.7)',
+  'rgba(42, 110, 202, 0.6)',
+  'rgba(64, 140, 230, 0.5)',
+  'rgba(82, 170, 255, 0.4)',
+  'rgba(115, 190, 255, 0.3)',
+  'rgba(160, 215, 255, 0.2)'
+        ],borderWidth: 0
           }]
         },
         options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: false
-            }
-          }
+  responsive: true,
+  plugins: {
+    legend: {
+      display: true,   // Set to true to show the legend
+      position: 'bottom',
+      labels: {
+        color: '#ffffff'
+      }
+    },
+    tooltip: {
+      callbacks: {
+        label: function(context) {
+          let label = context.label || '';
+          let value = context.parsed || 0;
+          return `${label}: ${value.toLocaleString()} lines`;
         }
+      }
+    }
+  }
+}
       });
     </script>
     {% endif %}
+    {% if monthly_commits %}
+<script>
+  const commitCtx = document.getElementById('commitChart').getContext('2d');
+  const commitChart = new Chart(commitCtx, {
+    type: 'bar',
+    data: {
+      labels: {{ monthly_commits.keys()|list|tojson }},
+      datasets: [{
+        label: 'Commits per Month',
+        data: {{ monthly_commits.values()|list|tojson }},
+        backgroundColor: [  'rgba(10, 25, 47, 0.9)',
+  'rgba(14, 36, 71, 0.85)',
+  'rgba(18, 49, 97, 0.8)',
+  'rgba(21, 61, 122, 0.75)',
+  'rgba(26, 80, 160, 0.7)',
+  'rgba(42, 110, 202, 0.6)',
+  'rgba(64, 140, 230, 0.5)',
+  'rgba(82, 170, 255, 0.4)',
+  'rgba(115, 190, 255, 0.3)',
+  'rgba(160, 215, 255, 0.2)']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true
+        }
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Month'
+          }
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Number of Commits'
+          }
+        }
+      }
+    }
+  });
+</script>
+{% endif %}
+
   </body>
 </html>
