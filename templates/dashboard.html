@@ -23,6 +23,9 @@
           <i class="fa-brands fa-github"></i>
           <span class="nav-title">GitHub Profile Explorer</span>
         </div>
+        <div class="nav-right">
+          <button class="hamburger"><i class="fa-solid fa-bars"></i></button>
+        </div>
       </div>
     </nav>
     <div class="app-container">
@@ -42,7 +45,7 @@
           <div class="user-info">
             <h2 class="name">{{ user_data.name }}</h2>
             <p class="username">@{{ user_data.username }}</p>
-            <p class="bio">{{ user_data.bio }}</p>
+            <p class="bio">{{ user_data.bio if user_data.bio else user_data.username + ' has no bio' }}</p>
 
             <div class="details">
               <p>
