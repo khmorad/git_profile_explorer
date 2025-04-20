@@ -1,18 +1,20 @@
 .navbar {
-  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background-color: #161b22;
-  padding: 12px 14px;
+  padding: 8px 14px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-
   top: 0;
   z-index: 1000;
 }
 
 .nav-content {
   display: flex;
-
-  max-width: 1200px;
-  margin: 0 auto;
+  justify-content: space-between; /* Pushes left and right to corners */
+  align-items: center;
+  width: 100%; /* Makes it full width */
+  padding: 0 16px; /* Optional: adds spacing on left/right */
 }
 
 .nav-left {
@@ -29,7 +31,10 @@
   font-weight: bold;
   color: #f0f6fc;
 }
-
+.nav-right {
+  display: flex;
+  align-items: center;
+}
 .nav-link {
   color: #9ecbff;
   font-size: 14px;
@@ -40,7 +45,18 @@
 .nav-link:hover {
   color: #ffffff;
 }
+.hamburger {
+  background: none;
+  border: none;
+  color: #f0f6fc;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px;
+}
 
+.hamburger:hover {
+  color: #ffffff;
+}
 body.dark {
   margin: 0;
   font-family: "Inter", sans-serif;
@@ -254,7 +270,6 @@ input[type="text"] {
   margin-top: 10px;
 }
 
-/* Only apply this scroll style to this container */
 .repo-list::-webkit-scrollbar {
   width: 6px;
 }
@@ -272,13 +287,11 @@ input[type="text"] {
   background-color: #666;
 }
 
-/* Firefox scrollbar */
 .repo-list {
   scrollbar-color: #444 transparent;
   scrollbar-width: thin;
 }
 
-/* Styling for repo list itself */
 .repo-ul {
   list-style: none;
   padding: 0;
@@ -301,18 +314,19 @@ input[type="text"] {
 }
 
 .repo-ul li a {
-  color: #9ecbff;
+  color: rgba(46, 124, 242, 0.75);
   text-decoration: none;
   word-break: break-word;
+  transition: 0.3s ease-in-out;
 }
 
 .repo-ul li a:hover {
-  color: #ffffff;
+  color: #0db4e2;
 }
 
 .button-64 {
   all: unset;
-  width: 100px;
+  width: 20px;
   height: 30px;
   font-size: 16px;
   background: transparent;
