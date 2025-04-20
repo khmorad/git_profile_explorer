@@ -17,10 +17,12 @@ def getUserTechStack(username):
     # response = requests.get(url, headers=headers)
     
     #fetch users repo info
-    print(requests.get("https://api.github.com/users/khmorad"))
-    github_response_repo = requests.get(repo_url, headers=headers)
-    github_response_repo = github_response_repo.json()
-    
+    try:
+        github_response_repo = requests.get(repo_url, headers=headers)
+        github_response_repo = github_response_repo.json()
+    except Exception as e:
+        print(f"Error fetching repos for {username}: {e}")
+        return {}    
     #get language url through repo list
     github_repo_languages = [] 
     for repo in github_response_repo:
@@ -43,9 +45,15 @@ def getUserTechStack(username):
 def get_monthly_commits(username):
     headers = {"Authorization": token}
     repos_url = f"https://api.github.com/users/{username}/repos"
-    repos_response = requests.get(repos_url, headers=headers)
-    repos = repos_response.json()
-
+    
+    try:
+        repos_response = requests.get(repos_url, headers=headers)
+        repos_response.raise_for_status()
+        repos = repos_response.json()
+    except Exception as e:
+        print(f"Error fetching repositories for commits: {e}")
+        return {}
+    
     monthly_commits = {}
     today = datetime.now()
     one_year_ago = today - timedelta(days=365)
@@ -53,14 +61,25 @@ def get_monthly_commits(username):
     for repo in repos:
         commits_url = f"https://api.github.com/repos/{username}/{repo['name']}/commits?since={one_year_ago.isoformat()}"
         while commits_url:
-            commits_response = requests.get(commits_url, headers=headers)
-            if commits_response.status_code == 200:
+            try:
+                commits_response = requests.get(commits_url, headers=headers)
+                commits_response.raise_for_status()
                 commits = commits_response.json()
-                for commit_data in commits:
+            except Exception as e:
+                print(f"Error fetching commits for {repo['name']}: {e}")
+                break
+
+            for commit_data in commits:
+                try:
                     commit_date = datetime.strptime(commit_data['commit']['author']['date'], '%Y-%m-%dT%H:%M:%SZ')
                     if commit_date >= one_year_ago:
                         month_year = commit_date.strftime('%Y-%m')
                         monthly_commits[month_year] = monthly_commits.get(month_year, 0) + 1
+                except Exception as e:
+                    print(f"Error parsing commit date: {e}")
+                    continue
+
+            try:
                 if 'Link' in commits_response.headers:
                     links = commits_response.headers['Link'].split(',')
                     next_link = None
@@ -71,13 +90,13 @@ def get_monthly_commits(username):
                     commits_url = next_link
                 else:
                     commits_url = None
-            else:
-                print(f"Error fetching commits for {repo['name']}: {commits_response.status_code}")
-                commits_url = None
-                break  
+            except Exception as e:
+                print(f"Error handling pagination for {repo['name']}: {e}")
+                break
 
     sorted_monthly_commits = dict(sorted(monthly_commits.items()))
     return sorted_monthly_commits
+
 
 @lru_cache(maxsize=128)    
 def show_users_repo_names(user):
@@ -99,15 +118,17 @@ def dashboard():
     languages = None
     repos = []
     monthly_commits = None
+
     if request.method == 'POST':
         username = request.form['username']
-        
-        
         user_info_url = f"https://api.github.com/users/{username}"
         headers = {"Authorization": token}
-        user_info_response = requests.get(user_info_url, headers=headers)
-        if user_info_response.status_code == 200:
+
+        try:
+            user_info_response = requests.get(user_info_url, headers=headers)
+            user_info_response.raise_for_status()
             user_info = user_info_response.json()
+            
             user_data = {
                 "username": user_info.get("login"),
                 "name": user_info.get("name"),
@@ -116,15 +137,32 @@ def dashboard():
                 "public_repos": user_info.get("public_repos"),
                 "porfile_pic": user_info.get("avatar_url")
             }
-            languages = dict(list(getUserTechStack(username).items())[:5])
-            repos = show_users_repo_names(username)
-            monthly_commits = get_monthly_commits(username)
 
-        else:
+            try:
+                languages = dict(list(getUserTechStack(username).items())[:5])
+            except Exception as e:
+                print(f"Error getting user tech stack: {e}")
+                languages = None
+
+            try:
+                repos = show_users_repo_names(username)
+            except Exception as e:
+                print(f"Error getting repo names: {e}")
+                repos = []
+
+            try:
+                monthly_commits = get_monthly_commits(username)
+            except Exception as e:
+                print(f"Error getting monthly commits: {e}")
+                monthly_commits = None
+
+        except Exception as e:
+            print(f"Error fetching user info for {username}: {e}")
             user_data = {"username": username, "name": "Not Found"}
             repos = []
 
-    return render_template('dashboard.html', user_data=user_data, languages=languages, repos=repos,  monthly_commits=monthly_commits)
+    return render_template('dashboard.html',user_data=user_data,languages=languages,repos=repos,
+                           monthly_commits=monthly_commits)
 
 if __name__ == '__main__':
     app.run(debug=True)

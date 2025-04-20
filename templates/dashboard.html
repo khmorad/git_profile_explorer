@@ -27,9 +27,11 @@
     </nav>
     <div class="app-container">
       <!-- Sidebar -->
+
+      {% if user_data %}
       <aside class="sidebar">
         <div class="profile">
-          {% if user_data %}
+          
           <div class="profile-pic">
             <img
               src="{{ user_data.porfile_pic }}"
@@ -61,10 +63,10 @@
               </p>
             </div>
           </div>
-          {% endif %}
+         
         </div>
       </aside>
-
+      {% endif %}
       <!-- Main Dashboard -->
       <main class="main">
         <header>
@@ -84,6 +86,10 @@
             </button>
           </form>
         </header>
+        
+        <div id="loading" style="display: none; text-align: center; margin: 20px;">
+          <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+        </div>
 
         {% if user_data %}
         <section class="profile-data">
@@ -288,6 +294,13 @@
   });
 </script>
 {% endif %}
+<script>
+  const form = document.querySelector('form');
+  const loading = document.getElementById('loading');
 
+  form.addEventListener('submit', () => {
+    loading.style.display = 'block';
+  });
+</script>
   </body>
 </html>
