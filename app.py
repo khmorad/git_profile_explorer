@@ -97,6 +97,38 @@ def get_monthly_commits(username):
     sorted_monthly_commits = dict(sorted(monthly_commits.items()))
     return sorted_monthly_commits
 
+@lru_cache(maxsize=128)
+def get_top_contributors(username, max_contributors=5):
+    headers = {"Authorization": token}
+    repo_url = f"https://api.github.com/users/{username}/repos"
+
+    try:
+        repos_response = requests.get(repo_url, headers=headers)
+        repos_response.raise_for_status()
+        repos = repos_response.json()
+    except Exception as e:
+        print(f"Error fetching repos for contributors: {e}")
+        return []
+
+    contributor_counts = {}
+
+    for repo in repos:
+        contributors_url = f"https://api.github.com/repos/{username}/{repo['name']}/contributors"
+        try:
+            contributors_response = requests.get(contributors_url, headers=headers)
+            contributors_response.raise_for_status()
+            contributors = contributors_response.json()
+
+            for contributor in contributors:
+                login = contributor["login"]
+                contributions = contributor["contributions"]
+                contributor_counts[login] = contributor_counts.get(login, 0) + contributions
+        except Exception as e:
+            print(f"Error fetching contributors for {repo['name']}: {e}")
+            continue
+
+    sorted_contributors = sorted(contributor_counts.items(), key=lambda x: x[1], reverse=True)
+    return sorted_contributors[:max_contributors]
 
 @lru_cache(maxsize=128)    
 def show_users_repo_names(user):
@@ -117,6 +149,7 @@ def dashboard():
     user_data = None
     languages = None
     repos = []
+    top_contributors = []
     monthly_commits = None
 
     if request.method == 'POST':
@@ -149,7 +182,10 @@ def dashboard():
             except Exception as e:
                 print(f"Error getting repo names: {e}")
                 repos = []
-
+            try:
+                top_contributors = get_top_contributors(username)
+            except Exception as e:
+                print(f"Error fetching top contributors: {e}")
             try:
                 monthly_commits = get_monthly_commits(username)
             except Exception as e:
@@ -162,7 +198,7 @@ def dashboard():
             repos = []
 
     return render_template('dashboard.html',user_data=user_data,languages=languages,repos=repos,
-                           monthly_commits=monthly_commits)
+                           monthly_commits=monthly_commits, top_contributors=top_contributors)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -130,14 +130,16 @@
               {% endif %}
             </div>
             <div class="card">
-              <p><strong>Username:</strong> {{ user_data.username }}</p>
-              <p><strong>Name:</strong> {{ user_data.name }}</p>
-              <p><strong>Bio:</strong> {{ user_data.bio }}</p>
-              <p><strong>Location:</strong> {{ user_data.location }}</p>
-              <p>
-                <strong>Public Repositories:</strong> {{ user_data.public_repos
-                }}
-              </p>
+              <h3>Top Contributors</h3>
+              <ul class="repo-ul">
+                {% for contributor, count in top_contributors %}
+                <li>
+                  <a href="https://github.com/{{ contributor }}" target="_blank">
+                    {{ contributor }} ({{ count }} commits)
+                  </a>
+                </li>
+                {% endfor %}
+              </ul>
             </div>
             <div class="card">
               <p><strong>Username:</strong> {{ user_data.username }}</p>
@@ -183,7 +185,6 @@
       const contributionData = {{ contribution_data|tojson }};
       const calendarContainer = document.querySelector("#github-calendar");
 
-      // Process the contribution data into the format expected by github-calendar
       const contributionsByDate = {};
       if (contributionData && contributionData.weeks) {
           contributionData.weeks.forEach(week => {
@@ -197,7 +198,7 @@
           data: contributionsByDate,
           tooltips: true,
           responsive: true,
-          theme: 'dark' // Assuming your site is dark themed
+          theme: 'dark' 
       });
     </script>
 
