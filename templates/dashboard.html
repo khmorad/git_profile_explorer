@@ -23,13 +23,18 @@
           <i class="fa-brands fa-github"></i>
           <span class="nav-title">GitHub Profile Explorer</span>
         </div>
+        <div class="nav-right">
+          <button class="hamburger"><i class="fa-solid fa-bars"></i></button>
+        </div>
       </div>
     </nav>
     <div class="app-container">
       <!-- Sidebar -->
+
+      {% if user_data %}
       <aside class="sidebar">
         <div class="profile">
-          {% if user_data %}
+          
           <div class="profile-pic">
             <img
               src="{{ user_data.porfile_pic }}"
@@ -40,7 +45,7 @@
           <div class="user-info">
             <h2 class="name">{{ user_data.name }}</h2>
             <p class="username">@{{ user_data.username }}</p>
-            <p class="bio">{{ user_data.bio }}</p>
+            <p class="bio">{{ user_data.bio if user_data.bio else user_data.username + ' has no bio' }}</p>
 
             <div class="details">
               <p>
@@ -61,10 +66,10 @@
               </p>
             </div>
           </div>
-          {% endif %}
+         
         </div>
       </aside>
-
+      {% endif %}
       <!-- Main Dashboard -->
       <main class="main">
         <header>
@@ -84,6 +89,10 @@
             </button>
           </form>
         </header>
+        
+        <div id="loading" style="display: none; text-align: center; margin: 20px;">
+          <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+        </div>
 
         {% if user_data %}
         <section class="profile-data">
@@ -288,6 +297,13 @@
   });
 </script>
 {% endif %}
+<script>
+  const form = document.querySelector('form');
+  const loading = document.getElementById('loading');
 
+  form.addEventListener('submit', () => {
+    loading.style.display = 'block';
+  });
+</script>
   </body>
 </html>
