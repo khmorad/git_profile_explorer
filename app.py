@@ -23,7 +23,7 @@ def generate_professional_summary(username, user_data, languages, repos):
 
     prompt = f"""
     Analyze this GitHub user's profile and identify their likely primary profession or area of expertise in 1-2 concise sentences. Focus on the skills and potential roles suggested by their profile information.
-
+    
     GitHub Profile:
     - Username: {username}
     - Name: {user_data.get('name', 'Not provided')}
