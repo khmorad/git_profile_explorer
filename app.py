@@ -4,9 +4,61 @@ from dotenv import load_dotenv
 import os
 from functools import lru_cache
 from datetime import datetime, timedelta
+import openai
+import traceback
+
 load_dotenv()
+
+
 token = os.getenv("git_hub_project")
-print(token)
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+def generate_professional_summary(username, user_data, languages, repos):
+    # Check if we have minimal relevant data to generate a meaningful summary
+    if not any([user_data.get('name'), user_data.get('bio'), languages]):
+        return "Insufficient data to generate professional summary."
+
+    top_languages_str = ', '.join(languages.keys()) if languages else 'Not detected'
+    repo_count = len(repos)
+
+    prompt = f"""
+    Analyze this GitHub user's profile and identify their likely primary profession or area of expertise in 1-2 concise sentences. Focus on the skills and potential roles suggested by their profile information.
+
+    GitHub Profile:
+    - Username: {username}
+    - Name: {user_data.get('name', 'Not provided')}
+    - Bio: {user_data.get('bio', 'Not provided')}
+    - Top Languages: {top_languages_str}
+    - Number of Public Repositories: {repo_count}
+
+    Likely Profession/Expertise:
+    """
+
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # Or consider "gpt-4" if available
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=150,  # Slightly increased max tokens for more flexibility
+            temperature=0.6,  # Slightly lower temperature for more focused output
+        )
+        summary = response['choices'][0]['message']['content'].strip()
+        return summary if summary else "Could not generate summary."
+    except openai.OpenAIError as e:  # Catch the base OpenAI error
+        print(f"OpenAI API error: {e}")
+        if "Incorrect API key provided" in str(e):
+            return "API authentication failed - check your OpenAI key."
+        elif "You exceeded your current quota" in str(e):
+            return "OpenAI API quota exceeded."
+        elif "This model's maximum context length" in str(e):
+            return "Prompt too long for the model."
+        elif "The API key provided is invalid" in str(e): # More specific auth error
+            return "API authentication failed - invalid OpenAI key."
+        else:
+            return f"Error with OpenAI API: {e}"
+    except Exception as e:
+        print(f"Unexpected error during summary generation: {e}")
+        traceback.print_exc() # Print detailed traceback for debugging
+        return "Could not generate professional summary due to an unexpected error."
 
 @lru_cache(maxsize=128)
 def getUserTechStack(username):
@@ -151,6 +203,7 @@ def dashboard():
     repos = []
     top_contributors = []
     monthly_commits = None
+    profession_summary = None
 
     if request.method == 'POST':
         username = request.form['username']
@@ -191,14 +244,26 @@ def dashboard():
             except Exception as e:
                 print(f"Error getting monthly commits: {e}")
                 monthly_commits = None
+            if request.method == 'POST':
+                username = request.form['username']
+                # ... (fetching user data, languages, repos)
 
+                print(f"Username for summary: {username}")
+                print(f"User data for summary: {user_data}")
+                print(f"Languages for summary: {languages}")
+                print(f"Repos for summary: {repos}")
+            try:
+                profession_summary = generate_professional_summary(username, user_data, languages, repos)
+            except Exception as e:
+                print(f"Error generating profession summary: {e}")
+                profession_summary = "Summary unavailable."
         except Exception as e:
             print(f"Error fetching user info for {username}: {e}")
             user_data = {"username": username, "name": "Not Found"}
             repos = []
 
     return render_template('dashboard.html',user_data=user_data,languages=languages,repos=repos,
-                           monthly_commits=monthly_commits, top_contributors=top_contributors)
+                           monthly_commits=monthly_commits, top_contributors=top_contributors, profession_summary=profession_summary)
 
 if __name__ == '__main__':
     app.run(debug=True)

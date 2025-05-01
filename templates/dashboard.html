@@ -65,6 +65,14 @@
                 >
               </p>
             </div>
+            {% if profession_summary %}
+<div class="summary-box">
+  <h3>AI Summary</h3>
+  <p style="font-size: 0.9rem; color: #ccc; line-height: 1.4;">
+    {{ profession_summary }}
+  </p>
+</div>
+{% endif %}
           </div>
          
         </div>
