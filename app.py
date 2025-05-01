@@ -35,13 +35,14 @@ def generate_professional_summary(username, user_data, languages, repos):
     """
 
     try:
-        response = openai.ChatCompletion.create(
+        client = openai.OpenAI() # Initialize the OpenAI client
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",  # Or consider "gpt-4" if available
             messages=[{"role": "user", "content": prompt}],
             max_tokens=150,  # Slightly increased max tokens for more flexibility
             temperature=0.6,  # Slightly lower temperature for more focused output
         )
-        summary = response['choices'][0]['message']['content'].strip()
+        summary = response.choices[0].message.content.strip()
         return summary if summary else "Could not generate summary."
     except openai.OpenAIError as e:  # Catch the base OpenAI error
         print(f"OpenAI API error: {e}")
@@ -59,7 +60,6 @@ def generate_professional_summary(username, user_data, languages, repos):
         print(f"Unexpected error during summary generation: {e}")
         traceback.print_exc() # Print detailed traceback for debugging
         return "Could not generate professional summary due to an unexpected error."
-
 @lru_cache(maxsize=128)
 def getUserTechStack(username):
     headers = {"Authorization": token}
