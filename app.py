@@ -9,78 +9,96 @@ import traceback
 
 load_dotenv()
 
-
 token = os.getenv("git_hub_project")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+@lru_cache(maxsize=64)
+def get_recent_activity(username, max_events=5):
+    headers = {"Authorization": token}
+    url = f"https://api.github.com/users/{username}/events/public"
+    try:
+        resp = requests.get(url, headers=headers)
+        resp.raise_for_status()
+        events = resp.json()
+        activity = []
+        for event in events[:max_events]:
+            evt_type = event.get("type")
+            repo = event.get("repo", {}).get("name", "")
+            created_at = event.get("created_at", "")
+            activity.append({"type": evt_type, "repo": repo, "created_at": created_at})
+        return activity
+    except Exception as e:
+        print(f"Error fetching recent activity: {e}")
+        return []
+
+@lru_cache(maxsize=64)
+def get_open_issues_prs(username):
+    headers = {"Authorization": token}
+    repos_url = f"https://api.github.com/users/{username}/repos"
+    try:
+        repos = requests.get(repos_url, headers=headers).json()
+        total_issues = 0
+        total_prs = 0
+        for repo in repos:
+            repo_name = repo['name']
+            issues_url = f"https://api.github.com/repos/{username}/{repo_name}/issues?state=open"
+            issues = requests.get(issues_url, headers=headers).json()
+            for issue in issues:
+                if 'pull_request' in issue:
+                    total_prs += 1
+                else:
+                    total_issues += 1
+        return {"issues": total_issues, "prs": total_prs}
+    except Exception as e:
+        print(f"Error fetching issues/PRs: {e}")
+        return {"issues": 0, "prs": 0}
+
 def generate_professional_summary(username, user_data, languages, repos):
-    # Check if we have minimal relevant data to generate a meaningful summary
     if not any([user_data.get('name'), user_data.get('bio'), languages]):
         return "Insufficient data to generate professional summary."
-
     top_languages_str = ', '.join(languages.keys()) if languages else 'Not detected'
     repo_count = len(repos)
-
     prompt = f"""
     Analyze this GitHub user's profile and identify their likely primary profession or area of expertise in 1-2 concise sentences. Focus on the skills and potential roles suggested by their profile information.
-    
     GitHub Profile:
     - Username: {username}
     - Name: {user_data.get('name', 'Not provided')}
     - Bio: {user_data.get('bio', 'Not provided')}
     - Top Languages: {top_languages_str}
     - Number of Public Repositories: {repo_count}
-
     Likely Profession/Expertise:
     """
-
     try:
-        client = openai.OpenAI() # Initialize the OpenAI client
+        client = openai.OpenAI()
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",  # Or consider "gpt-4" if available
+            model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=150,  # Slightly increased max tokens for more flexibility
-            temperature=0.6,  # Slightly lower temperature for more focused output
+            max_tokens=150,
+            temperature=0.6,
         )
         summary = response.choices[0].message.content.strip()
         return summary if summary else "Could not generate summary."
-    except openai.OpenAIError as e:  # Catch the base OpenAI error
+    except openai.OpenAIError as e:
         print(f"OpenAI API error: {e}")
-        if "Incorrect API key provided" in str(e):
-            return "API authentication failed - check your OpenAI key."
-        elif "You exceeded your current quota" in str(e):
-            return "OpenAI API quota exceeded."
-        elif "This model's maximum context length" in str(e):
-            return "Prompt too long for the model."
-        elif "The API key provided is invalid" in str(e): # More specific auth error
-            return "API authentication failed - invalid OpenAI key."
-        else:
-            return f"Error with OpenAI API: {e}"
+        return f"Error with OpenAI API: {e}"
     except Exception as e:
         print(f"Unexpected error during summary generation: {e}")
-        traceback.print_exc() # Print detailed traceback for debugging
+        traceback.print_exc()
         return "Could not generate professional summary due to an unexpected error."
+
 @lru_cache(maxsize=128)
 def getUserTechStack(username):
     headers = {"Authorization": token}
-
-    #url = f"https://api.github.com/users/{username}"
     repo_url = f"https://api.github.com/users/{username}/repos"
-    # response = requests.get(url, headers=headers)
-    
-    #fetch users repo info
     try:
         github_response_repo = requests.get(repo_url, headers=headers)
         github_response_repo = github_response_repo.json()
     except Exception as e:
         print(f"Error fetching repos for {username}: {e}")
-        return {}    
-    #get language url through repo list
-    github_repo_languages = [] 
+        return {}
+    github_repo_languages = []
     for repo in github_response_repo:
         github_repo_languages.append(requests.get(repo['languages_url'], headers=headers).json())
-        
-    # using the data fetch to create a language dictorary in decreasing order    
     langs = {}
     for info in github_repo_languages:
         for lang, lines in info.items():
@@ -97,7 +115,6 @@ def getUserTechStack(username):
 def get_monthly_commits(username):
     headers = {"Authorization": token}
     repos_url = f"https://api.github.com/users/{username}/repos"
-    
     try:
         repos_response = requests.get(repos_url, headers=headers)
         repos_response.raise_for_status()
@@ -105,11 +122,9 @@ def get_monthly_commits(username):
     except Exception as e:
         print(f"Error fetching repositories for commits: {e}")
         return {}
-    
     monthly_commits = {}
     today = datetime.now()
     one_year_ago = today - timedelta(days=365)
-
     for repo in repos:
         commits_url = f"https://api.github.com/repos/{username}/{repo['name']}/commits?since={one_year_ago.isoformat()}"
         while commits_url:
@@ -120,7 +135,6 @@ def get_monthly_commits(username):
             except Exception as e:
                 print(f"Error fetching commits for {repo['name']}: {e}")
                 break
-
             for commit_data in commits:
                 try:
                     commit_date = datetime.strptime(commit_data['commit']['author']['date'], '%Y-%m-%dT%H:%M:%SZ')
@@ -130,7 +144,6 @@ def get_monthly_commits(username):
                 except Exception as e:
                     print(f"Error parsing commit date: {e}")
                     continue
-
             try:
                 if 'Link' in commits_response.headers:
                     links = commits_response.headers['Link'].split(',')
@@ -145,7 +158,6 @@ def get_monthly_commits(username):
             except Exception as e:
                 print(f"Error handling pagination for {repo['name']}: {e}")
                 break
-
     sorted_monthly_commits = dict(sorted(monthly_commits.items()))
     return sorted_monthly_commits
 
@@ -153,7 +165,6 @@ def get_monthly_commits(username):
 def get_top_contributors(username, max_contributors=5):
     headers = {"Authorization": token}
     repo_url = f"https://api.github.com/users/{username}/repos"
-
     try:
         repos_response = requests.get(repo_url, headers=headers)
         repos_response.raise_for_status()
@@ -161,16 +172,13 @@ def get_top_contributors(username, max_contributors=5):
     except Exception as e:
         print(f"Error fetching repos for contributors: {e}")
         return []
-
     contributor_counts = {}
-
     for repo in repos:
         contributors_url = f"https://api.github.com/repos/{username}/{repo['name']}/contributors"
         try:
             contributors_response = requests.get(contributors_url, headers=headers)
             contributors_response.raise_for_status()
             contributors = contributors_response.json()
-
             for contributor in contributors:
                 login = contributor["login"]
                 contributions = contributor["contributions"]
@@ -178,11 +186,10 @@ def get_top_contributors(username, max_contributors=5):
         except Exception as e:
             print(f"Error fetching contributors for {repo['name']}: {e}")
             continue
-
     sorted_contributors = sorted(contributor_counts.items(), key=lambda x: x[1], reverse=True)
     return sorted_contributors[:max_contributors]
 
-@lru_cache(maxsize=128)    
+@lru_cache(maxsize=128)
 def show_users_repo_names(user):
     headers = {"Authorization": token}
     repourl = f"https://api.github.com/users/{user}/repos"
@@ -191,8 +198,7 @@ def show_users_repo_names(user):
     repo_names = []
     for repo in github_rep_response:
         repo_names.append(repo['name'])
-
-    return repo_names  
+    return repo_names
 
 app = Flask(__name__)
 
@@ -204,6 +210,10 @@ def dashboard():
     top_contributors = []
     monthly_commits = None
     profession_summary = None
+    followers = None
+    following = None
+    recent_activity = []
+    open_stats = {"issues": 0, "prs": 0}
 
     if request.method == 'POST':
         username = request.form['username']
@@ -214,22 +224,23 @@ def dashboard():
             user_info_response = requests.get(user_info_url, headers=headers)
             user_info_response.raise_for_status()
             user_info = user_info_response.json()
-            
             user_data = {
                 "username": user_info.get("login"),
                 "name": user_info.get("name"),
                 "bio": user_info.get("bio"),
                 "location": user_info.get("location"),
                 "public_repos": user_info.get("public_repos"),
-                "porfile_pic": user_info.get("avatar_url")
+                "porfile_pic": user_info.get("avatar_url"),
+                "followers": user_info.get("followers"),
+                "following": user_info.get("following"),
             }
-
+            followers = user_info.get("followers")
+            following = user_info.get("following")
             try:
                 languages = dict(list(getUserTechStack(username).items())[:5])
             except Exception as e:
                 print(f"Error getting user tech stack: {e}")
                 languages = None
-
             try:
                 repos = show_users_repo_names(username)
             except Exception as e:
@@ -244,14 +255,16 @@ def dashboard():
             except Exception as e:
                 print(f"Error getting monthly commits: {e}")
                 monthly_commits = None
-            if request.method == 'POST':
-                username = request.form['username']
-                # ... (fetching user data, languages, repos)
-
-                print(f"Username for summary: {username}")
-                print(f"User data for summary: {user_data}")
-                print(f"Languages for summary: {languages}")
-                print(f"Repos for summary: {repos}")
+            try:
+                recent_activity = get_recent_activity(username)
+            except Exception as e:
+                print(f"Error getting recent activity: {e}")
+                recent_activity = []
+            try:
+                open_stats = get_open_issues_prs(username)
+            except Exception as e:
+                print(f"Error getting open issues/prs: {e}")
+                open_stats = {"issues": 0, "prs": 0}
             try:
                 profession_summary = generate_professional_summary(username, user_data, languages, repos)
             except Exception as e:
@@ -262,8 +275,19 @@ def dashboard():
             user_data = {"username": username, "name": "Not Found"}
             repos = []
 
-    return render_template('dashboard.html',user_data=user_data,languages=languages,repos=repos,
-                           monthly_commits=monthly_commits, top_contributors=top_contributors, profession_summary=profession_summary)
+    return render_template(
+        'dashboard.html',
+        user_data=user_data,
+        languages=languages,
+        repos=repos,
+        monthly_commits=monthly_commits,
+        top_contributors=top_contributors,
+        profession_summary=profession_summary,
+        followers=followers,
+        following=following,
+        recent_activity=recent_activity,
+        open_stats=open_stats,
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
