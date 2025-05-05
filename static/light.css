@@ -1,0 +1,103 @@
+body.light {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background-color: #ffffff;
+  color: #24292f;
+}
+
+.navbar {
+  background-color: #f6f8fa;
+  color: #24292f;
+  box-shadow: 0 1px 0 rgba(27, 31, 35, 0.1);
+}
+
+.nav-left,
+.nav-title {
+  color: #24292f;
+}
+
+.nav-link {
+  color: #0969da;
+}
+
+.nav-link:hover {
+  color: #0550ae;
+}
+
+.hamburger {
+  color: #24292f;
+}
+
+.hamburger:hover {
+  color: #000000;
+}
+
+.sidebar {
+  background-color: #f6f8fa;
+  color: #24292f;
+  border-right: 1px solid #d0d7de;
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #d0d7de;
+  color: #24292f;
+}
+
+input[type="text"] {
+  background-color: #ffffff;
+  border: 1px solid #d0d7de;
+  color: #24292f;
+}
+
+.details {
+  color: #57606a;
+}
+
+.details a {
+  color: #0969da;
+}
+
+.details a:hover {
+  text-decoration: underline;
+}
+
+.repo-ul li {
+  border-bottom: 1px solid #d8dee4;
+}
+
+.repo-ul li:hover {
+  background-color: #f6f8fa;
+}
+
+.repo-ul li a {
+  color: #0969da;
+}
+
+.repo-ul li a:hover {
+  color: #0550ae;
+}
+
+.button-64::before {
+  background: #eaeef2;
+}
+
+.button-64::after {
+  background: #ffffff55;
+}
+
+.ch-label {
+  color: #57606a;
+}
+
+.ch-value {
+  color: #1f2328;
+}
+
+.recent-activity-list::-webkit-scrollbar-thumb {
+  background-color: #c9d1d9;
+}
+
+.repo-list::-webkit-scrollbar-thumb {
+  background-color: #c9d1d9;
+}

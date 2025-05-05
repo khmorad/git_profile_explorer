@@ -1,0 +1,71 @@
+.button-64 {
+  all: unset;
+  width: 20px;
+  height: 30px;
+  font-size: 16px;
+  background: transparent;
+  border: none;
+  position: relative;
+  color: #1a1a1a; /* dark text for visibility on light background */
+  cursor: pointer;
+  z-index: 1;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-64:hover {
+  color: #0056b3; /* soft blue for hover */
+}
+
+.button-64::after,
+.button-64::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+  transition: all 0.4s ease-in-out;
+}
+
+.button-64::before {
+  transform: translate(0%, 0%);
+  width: 100%;
+  height: 100%;
+  background: #f1f1f1; /* light gray */
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* soft shadow */
+}
+
+.button-64::after {
+  transform: translate(10px, 10px);
+  width: 35px;
+  height: 35px;
+  background: rgba(0, 0, 0, 0.05); /* subtle overlay */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 50px;
+}
+
+.button-64:hover::before {
+  transform: translate(3%, 10%);
+  width: 105%;
+  height: 105%;
+}
+
+.button-64:hover::after {
+  border-radius: 10px;
+  transform: translate(0, 0);
+  width: 100%;
+  height: 100%;
+}
+
+.button-64:active::after {
+  transition: 0s;
+  transform: translate(0, 5%);
+}

@@ -8,6 +8,22 @@
       href="{{ url_for('static', filename='style.css') }}"
     />
     <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='light.css') }}"
+  />
+  <link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='sidebar.css') }}"
+/>
+<link
+rel="stylesheet"
+href="{{ url_for('static', filename='navbar.css') }}"
+/>
+<link
+rel="stylesheet"
+href="{{ url_for('static', filename='button.css') }}"
+/>
+    <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
@@ -17,7 +33,7 @@
     />
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
   </head>
-  <body class="dark">
+  <body class="light">
     <nav class="navbar">
       <div class="nav-content">
         <div class="nav-left">
@@ -69,7 +85,7 @@
             {% if profession_summary %}
             <div class="summary-box">
                 <h3>AI Summary</h3>
-                <p style="font-size: 0.9rem; color: #ccc; line-height: 1.4;">
+                <p style="font-size: 0.9rem; color: #0c0b0b; line-height: 1.4;">
                     <span id="typed-summary">{{ profession_summary }}</span>
                 </p>
             </div>
@@ -262,97 +278,103 @@
     
     {% if languages %}
     <script>
-      const ctx = document.getElementById('langChart').getContext('2d');
-      const langChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: {{ languages.keys()|list|tojson }},
-          datasets: [{
-            label: 'Repos by Language',
-            data: {{ languages.values()|list|tojson }},
-            backgroundColor: [    'rgba(10, 25, 47, 0.9)',
-  'rgba(14, 36, 71, 0.85)',
-  'rgba(18, 49, 97, 0.8)',
-  'rgba(21, 61, 122, 0.75)',
-  'rgba(26, 80, 160, 0.7)',
-  'rgba(42, 110, 202, 0.6)',
-  'rgba(64, 140, 230, 0.5)',
-  'rgba(82, 170, 255, 0.4)',
-  'rgba(115, 190, 255, 0.3)',
-  'rgba(160, 215, 255, 0.2)'
-        ],borderWidth: 0
-          }]
-        },
-        options: {
-  responsive: true,
-  plugins: {
-    legend: {
-      display: true,   // Set to true to show the legend
-      position: 'bottom',
-      labels: {
-        color: '#ffffff'
-      }
-    },
-    tooltip: {
-      callbacks: {
-        label: function(context) {
-          let label = context.label || '';
-          let value = context.parsed || 0;
-          return `${label}: ${value.toLocaleString()} lines`;
+const ctx = document.getElementById('langChart').getContext('2d');
+const langChart = new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+    labels: {{ languages.keys()|list|tojson }},
+    datasets: [{
+      label: 'Repos by Language',
+      data: {{ languages.values()|list|tojson }},
+      backgroundColor: [
+        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
+        '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
+        '#bcbd22', '#17becf'
+      ],
+      borderColor: '#ffffff',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom',
+        labels: {
+          color: '#24292f', // label text color for light background
+          font: {
+            size: 12
+          }
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            const label = context.label || '';
+            const value = context.parsed || 0;
+            return `${label}: ${value.toLocaleString()} lines`;
+          }
         }
       }
     }
   }
-}
-      });
+});
+
     </script>
     {% endif %}
     {% if monthly_commits %}
 <script>
-  const commitCtx = document.getElementById('commitChart').getContext('2d');
-  const commitChart = new Chart(commitCtx, {
-    type: 'bar',
-    data: {
-      labels: {{ monthly_commits.keys()|list|tojson }},
-      datasets: [{
-        label: 'Commits per Month',
-        data: {{ monthly_commits.values()|list|tojson }},
-        backgroundColor: [  'rgba(10, 25, 47, 0.9)',
-  'rgba(14, 36, 71, 0.85)',
-  'rgba(18, 49, 97, 0.8)',
-  'rgba(21, 61, 122, 0.75)',
-  'rgba(26, 80, 160, 0.7)',
-  'rgba(42, 110, 202, 0.6)',
-  'rgba(64, 140, 230, 0.5)',
-  'rgba(82, 170, 255, 0.4)',
-  'rgba(115, 190, 255, 0.3)',
-  'rgba(160, 215, 255, 0.2)']
-      }]
+const commitCtx = document.getElementById('commitChart').getContext('2d');
+const commitChart = new Chart(commitCtx, {
+  type: 'bar',
+  data: {
+    labels: {{ monthly_commits.keys()|list|tojson }},
+    datasets: [{
+      label: 'Commits per Month',
+      data: {{ monthly_commits.values()|list|tojson }},
+      backgroundColor: [
+        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
+        '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
+        '#bcbd22', '#17becf', '#ffbb78', '#98df8a'
+      ]
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        labels: {
+          color: '#24292f'
+        }
+      }
     },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          display: true
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Month',
+          color: '#24292f'
+        },
+        ticks: {
+          color: '#24292f'
         }
       },
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: 'Month'
-          }
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Number of Commits',
+          color: '#24292f'
         },
-        y: {
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Number of Commits'
-          }
+        ticks: {
+          color: '#24292f'
         }
       }
     }
-  });
+  }
+});
+
 </script>
 {% endif %}
 <script>
