@@ -6,16 +6,22 @@ import pandas as pd
 import datetime
 import os
 import seaborn as sns
+from functools import lru_cache
+from flask import session
+from dotenv import load_dotenv
 
+load_dotenv('key.env')
 repo_url = "https://api.github.com/"
 token = os.getenv("git_hub_project")
 
+
+@lru_cache(maxsize=64)
 def get_function(repo_url):
     response = r.request(
         url=repo_url,
         method="GET",
         headers={
-            'Authorization': token,
+            'Authorization': f'token {token}',
             # 'page_limit': '100'
         })
     html = response.json()
@@ -25,8 +31,9 @@ def get_function(repo_url):
         return None
 
 
+@lru_cache(maxsize=64)
 # User profile
-def get_user_metadata(username):
+def get_profile_score(username):
     url = repo_url + "users/" + username
     metadata_list = ['bio', 'location', 'email', 'blog', 'twitter_username', 'company', 'hireable']
     data = get_function(url)
@@ -36,6 +43,7 @@ def get_user_metadata(username):
     return profile_result
 
 
+@lru_cache(maxsize=64)
 def get_all_repo_metadata(username):
     url = repo_url + "users/" + username + '/repos'
     data = get_function(url)
@@ -44,7 +52,7 @@ def get_all_repo_metadata(username):
 
 
 def count_recently_updated_repo(data: list):
-    recent_range = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=30) # Mark recent as 30 days range
+    recent_range = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=30)  # Mark recent as 30 days range
     count = 0
     for repo in data:
         # Count number of date time
@@ -58,25 +66,29 @@ def get_top_5_language(language_series: pd.Series):
     return all[:5].index.tolist()
 
 
-def plot_language_time_series(values, keys, username):
+def get_language_time_series(values, keys):
     language_data_plot = pd.DataFrame(values, index=keys)
     language_data_plot = np.log(language_data_plot)
     top_5 = get_top_5_language(language_data_plot)
     language_data_plot = pd.DataFrame(language_data_plot, columns=top_5, index=keys)
-    fig = plt.figure(figsize=(10, 5))
-    sns.lineplot(data=language_data_plot, legend=False, dashes=False)
-    sns.scatterplot(
-        data=language_data_plot,
-    )
-    plt.legend(loc='best', bbox_to_anchor=(1, 0.5), title='Top 5 Languages')
-    plt.title(f"Top 5 Languages over time of {username}")
-    plt.tight_layout()
-    return fig
+    # fig = plt.figure(figsize=(10, 5))
+    # sns.lineplot(data=language_data_plot, legend=False, dashes=False)
+    # sns.scatterplot(
+    #     data=language_data_plot,
+    # )
+    # plt.legend(loc='best', bbox_to_anchor=(1, 0.5), title='Top 5 Languages')
+    # plt.title(f"Top 5 Languages over time of {username}")
+    # plt.tight_layout()
+    return language_data_plot
 
+
+@lru_cache(maxsize=256)
+def get_language_data(url):
+    return get_function(url)
 
 def language_proficiency(language_url):
     language_dict = {}
-    languages = get_function(language_url)
+    languages = get_language_data(language_url)
     for language in languages:
         if language not in language_dict:
             language_dict[language] = languages[language]
@@ -86,7 +98,8 @@ def language_proficiency(language_url):
         return None
     return language_dict
 
-def get_repo_metadata(username):
+
+def get_repo_analysis_data(username):
     repo_data = get_all_repo_metadata(username)
     df = pd.DataFrame(repo_data, columns=['name', 'description', 'branches_url', 'languages_url', 'stargazers_count',
                                           'watchers_count', 'forks', 'created_at', 'updated_at'])
@@ -94,11 +107,20 @@ def get_repo_metadata(username):
     df = df.set_index("created_at")
     df['language'] = df['languages_url'].apply(language_proficiency)
 
-    #Plot top 5 languages change overtime
+    # Top 5 languages change overtime
     values = df['language'].dropna().tolist()
     keys = df['language'].dropna().index.tolist()
-    top_5_plot = plot_language_time_series(values, keys, username)
-    top_5_plot.show()
-
-    #Count recently updated repo (30 days)
-    recently_updated_count = count_recently_updated_repo(df['updated_at'].tolist())
+    time_series_data = get_language_time_series(values, keys)
+    # print(time_series_data)
+    html_chart_data = {
+        'labels': time_series_data.index.strftime('%Y-%m-%dT%H:%M:%SZ').tolist(),
+        'datasets': [
+            {
+                'label': col,
+                'data': time_series_data[col].tolist()
+            } for col in time_series_data.columns
+        ]
+    }
+    # Count recently updated repo (30 days)
+    # recently_updated_count = count_recently_updated_repo(df['updated_at'].tolist())
+    return html_chart_data
