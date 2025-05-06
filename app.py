@@ -18,7 +18,7 @@ from helpers import (
 )
 import github_explorer_analysis_module as analysis
 
-load_dotenv('key.env')
+load_dotenv()
 
 token = os.getenv('git_hub_project')
 openai.api_key = os.getenv("OPENAI_API_KEY")
