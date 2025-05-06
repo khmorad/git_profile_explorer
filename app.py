@@ -15,7 +15,7 @@ from helpers import (
     show_users_repo_names,
     generate_professional_summary
 )
-
+import github_explorer_analysis_module as analysis
 load_dotenv()
 
 token = os.getenv("git_hub_project")
@@ -35,6 +35,7 @@ def dashboard():
     profession_summary = None
     followers = None
     following = None
+    language_data = None
     recent_activity = []
     open_stats = {"issues": 0, "prs": 0}
 
@@ -93,6 +94,10 @@ def dashboard():
             except Exception as e:
                 print(f"Error generating profession summary: {e}")
                 profession_summary = "Summary unavailable."
+            try:
+                language_data = analysis.get_repo_analysis_data(username)
+            except Exception as e:
+                print(f"Error while getting repo language analysis: {e}")
         except Exception as e:
             print(f"Error fetching user info for {username}: {e}")
             user_data = {"username": username, "name": "Not Found"}
@@ -110,6 +115,7 @@ def dashboard():
         following=following,
         recent_activity=recent_activity,
         open_stats=open_stats,
+        language_data=language_data
     )
 
 if __name__ == '__main__':
