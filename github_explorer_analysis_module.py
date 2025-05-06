@@ -5,12 +5,11 @@ import json
 import pandas as pd
 import datetime
 import os
-import seaborn as sns
 from functools import lru_cache
 from flask import session
 from dotenv import load_dotenv
 
-load_dotenv('key.env')
+load_dotenv('.env')
 repo_url = "https://api.github.com/"
 token = os.getenv("git_hub_project")
 
