@@ -5,15 +5,14 @@ import os
 import openai
 import traceback
 from dotenv import load_dotenv
+from flask import session
 
-load_dotenv()
-token = os.getenv("git_hub_project")
+load_dotenv('key.env')
 openai.api_key = os.getenv("OPENAI_API_KEY")
-headers = {"Authorization": token}
+headers = {"Authorization": f'token {os.getenv('git_hub_project')}'}
 
 @lru_cache(maxsize=64)
 def get_recent_activity(username, max_events=5):
-    headers = {"Authorization": token}
     url = f"https://api.github.com/users/{username}/events/public"
     try:
         resp = requests.get(url, headers=headers)
@@ -32,7 +31,6 @@ def get_recent_activity(username, max_events=5):
 
 @lru_cache(maxsize=64)
 def get_open_issues_prs(username):
-    headers = {"Authorization": token}
     repos_url = f"https://api.github.com/users/{username}/repos"
     try:
         repos = requests.get(repos_url, headers=headers).json()
@@ -87,7 +85,6 @@ def generate_professional_summary(username, user_data, languages, repos):
 
 @lru_cache(maxsize=128)
 def getUserTechStack(username):
-    headers = {"Authorization": token}
     repo_url = f"https://api.github.com/users/{username}/repos"
     try:
         github_response_repo = requests.get(repo_url, headers=headers)
@@ -112,7 +109,6 @@ def getUserTechStack(username):
 
 @lru_cache(maxsize=128)
 def get_monthly_commits(username):
-    headers = {"Authorization": token}
     repos_url = f"https://api.github.com/users/{username}/repos"
     try:
         repos_response = requests.get(repos_url, headers=headers)
@@ -162,7 +158,6 @@ def get_monthly_commits(username):
 
 @lru_cache(maxsize=128)
 def get_top_contributors(username, max_contributors=5):
-    headers = {"Authorization": token}
     repo_url = f"https://api.github.com/users/{username}/repos"
     try:
         repos_response = requests.get(repo_url, headers=headers)
@@ -190,7 +185,6 @@ def get_top_contributors(username, max_contributors=5):
 
 @lru_cache(maxsize=128)
 def show_users_repo_names(user):
-    headers = {"Authorization": token}
     repourl = f"https://api.github.com/users/{user}/repos"
     response = requests.get(repourl, headers=headers)
     github_rep_response = response.json()
