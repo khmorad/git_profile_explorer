@@ -46,7 +46,7 @@ def dashboard():
 
         username = request.form['username']
         user_info_url = f"https://api.github.com/users/{username}"
-        headers = {"Authorization": f'token {token}'}
+        headers = {"Authorization": token}
 
         try:
             user_info_response = requests.get(user_info_url, headers=headers)

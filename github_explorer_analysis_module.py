@@ -21,7 +21,7 @@ def get_function(repo_url):
         url=repo_url,
         method="GET",
         headers={
-            'Authorization': f'token {token}',
+            'Authorization': token,
             # 'page_limit': '100'
         })
     html = response.json()

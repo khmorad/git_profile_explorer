@@ -8,8 +8,9 @@ from dotenv import load_dotenv
 from flask import session
 
 load_dotenv('key.env')
+token = os.getenv("git_hub_project")
 openai.api_key = os.getenv("OPENAI_API_KEY")
-headers = {"Authorization": f'token {os.getenv('git_hub_project')}'}
+headers = {"Authorization": token}
 
 @lru_cache(maxsize=64)
 def get_recent_activity(username, max_events=5):
