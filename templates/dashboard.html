@@ -129,10 +129,12 @@ href="{{ url_for('static', filename='button.css') }}"
               <div style="width: 220px; height: 220px; margin: auto;">
                 <canvas id="langChart"></canvas>
               </div>            </div>
+  
             <div class="card">
               <h3>Monthly Commits</h3>
               <canvas id="commitChart" width="400" height="200"></canvas>
             </div>
+       
             <div class="card">
               <h3>Repositories</h3>
               {% if repos %}
@@ -155,6 +157,12 @@ href="{{ url_for('static', filename='button.css') }}"
               {% endif %}
             </div>
             <div class="card">
+              <h3>Community & Project</h3>
+              <div style="width: 230px; height: 230px; margin: auto;">
+                <canvas id="healthChart" width="230" height="230"></canvas>
+              </div>
+            </div> 
+            <div class="card">
               <h3>Top Contributors</h3>
               <ul class="repo-ul">
                 {% for contributor, count in top_contributors %}
@@ -166,39 +174,10 @@ href="{{ url_for('static', filename='button.css') }}"
                 {% endfor %}
               </ul>
             </div>
-            <div class="card community-health-card">
-              <h3>Community & Project Health</h3>
-              <div class="community-health-grid">
-                <div class="ch-section">
-                  <div class="ch-label"><i class="fa-solid fa-user-group"></i> Followers</div>
-                  <div class="ch-value">
-                    <a href="https://github.com/{{ user_data.username }}?tab=followers" target="_blank">
-                      {{ user_data.followers }}
-                    </a>
-                  </div>
-                </div>
-                <div class="ch-section">
-                  <div class="ch-label"><i class="fa-solid fa-user-plus"></i> Following</div>
-                  <div class="ch-value">
-                    <a href="https://github.com/{{ user_data.username }}?tab=following" target="_blank">
-                      {{ user_data.following }}
-                    </a>
-                  </div>
-                </div>
-                <div class="ch-section">
-                  <div class="ch-label"><i class="fa-solid fa-circle-exclamation"></i> Open Issues</div>
-                  <div class="ch-value">
-                    {{ open_stats.issues }}
-                  </div>
-                </div>
-                <div class="ch-section">
-                  <div class="ch-label"><i class="fa-solid fa-code-pull-request"></i> Open PRs</div>
-                  <div class="ch-value">
-                    {{ open_stats.prs }}
-                  </div>
-                </div>
-              </div>
-            </div>
+
+            
+            
+            
             
             <div class="card">
               <h3>Recent Activity</h3>
@@ -376,6 +355,66 @@ const commitChart = new Chart(commitCtx, {
 });
 
 </script>
+{% if user_data and followers is not none and following is not none and open_stats %}
+<script>
+  const healthCtx = document.getElementById('healthChart').getContext('2d');
+  const healthChart = new Chart(healthCtx, {
+    type: 'polarArea',
+    data: {
+      labels: ['Followers', 'Following', 'Open Issues', 'Open PRs'],
+      datasets: [{
+        label: 'Community Health Stats',
+        data: [
+          {{ followers }},
+          {{ following }},
+          {{ open_stats.issues }},
+          {{ open_stats.prs }}
+        ],
+        backgroundColor: [
+          '#1f77b4',
+          '#2ca02c',
+          '#ff7f0e',
+          '#d62728'
+        ],
+        borderColor: '#fff',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+  legend: {
+    position: 'bottom',  // ⬅ move legend to the bottom
+    labels: {
+      color: '#24292f',
+      font: {
+        size: 12
+      }
+    }
+  }
+}
+,
+      scales: {
+        r: {
+          ticks: {
+            color: '#24292f'
+          },
+          grid: {
+            color: '#ccc'
+          },
+          angleLines: {
+            color: '#ccc'
+          },
+          pointLabels: {
+            color: '#24292f'
+          }
+        }
+      }
+    }
+  });
+</script>
+{% endif %}
+
 {% endif %}
 <script>
   const form = document.querySelector('form');
