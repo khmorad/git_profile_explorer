@@ -21,7 +21,7 @@ def get_function(repo_url):
         url=repo_url,
         method="GET",
         headers={
-            'Authorization': f'token {token}',
+            'Authorization': token,
             # 'page_limit': '100'
         })
     html = response.json()
@@ -111,16 +111,16 @@ def get_repo_analysis_data(username):
     values = df['language'].dropna().tolist()
     keys = df['language'].dropna().index.tolist()
     time_series_data = get_language_time_series(values, keys)
+    time_series_data.sort_index(inplace=True, ascending=True)
+    # Convert index to ISO 8601 time format suitable for Chart.js
+    time_series_data.index = time_series_data.index.strftime('%Y-%m-%d')
+    time_series_data.reset_index(inplace=True)
+
     # print(time_series_data)
-    html_chart_data = {
-        'labels': time_series_data.index.strftime('%Y-%m-%dT%H:%M:%SZ').tolist(),
-        'datasets': [
-            {
-                'label': col,
-                'data': time_series_data[col].tolist()
-            } for col in time_series_data.columns
-        ]
-    }
+
     # Count recently updated repo (30 days)
     # recently_updated_count = count_recently_updated_repo(df['updated_at'].tolist())
-    return html_chart_data
+    output_dict = {}
+    for col in time_series_data.columns:
+        output_dict[col] = time_series_data[col].tolist()
+    return output_dict
