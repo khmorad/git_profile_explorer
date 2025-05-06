@@ -56,6 +56,8 @@ def dashboard():
                 "porfile_pic": user_info.get("avatar_url"),
                 "followers": user_info.get("followers"),
                 "following": user_info.get("following"),
+                "blog": user_info.get("blog"),
+                "linkedin": user_info.get("blog") if "linkedin.com" in str(user_info.get("blog")).lower() else None
             }
             followers = user_info.get("followers")
             following = user_info.get("following")
@@ -88,11 +90,6 @@ def dashboard():
             except Exception as e:
                 print(f"Error getting open issues/prs: {e}")
                 open_stats = {"issues": 0, "prs": 0}
-            try:
-                profession_summary = generate_professional_summary(username, user_data, languages, repos)
-            except Exception as e:
-                print(f"Error generating profession summary: {e}")
-                profession_summary = "Summary unavailable."
         except Exception as e:
             print(f"Error fetching user info for {username}: {e}")
             user_data = {"username": username, "name": "Not Found"}
@@ -111,6 +108,42 @@ def dashboard():
         recent_activity=recent_activity,
         open_stats=open_stats,
     )
+from flask import jsonify
+
+@app.route('/generate_summary', methods=['POST'])
+def generate_summary():
+    data = request.get_json()
+    username = data.get("username")
+    if not username:
+        return jsonify({"summary": "No username provided."}), 400
+
+    user_info_url = f"https://api.github.com/users/{username}"
+    headers = {"Authorization": token}
+
+    try:
+        user_info_response = requests.get(user_info_url, headers=headers)
+        user_info_response.raise_for_status()
+        user_info = user_info_response.json()
+
+        user_data = {
+            "username": user_info.get("login"),
+            "name": user_info.get("name"),
+            "bio": user_info.get("bio"),
+            "location": user_info.get("location"),
+            "public_repos": user_info.get("public_repos"),
+            "porfile_pic": user_info.get("avatar_url"),
+            "followers": user_info.get("followers"),
+            "following": user_info.get("following"),
+            "blog": user_info.get("blog"),
+        }
+
+        repos = show_users_repo_names(username)
+        languages = dict(list(getUserTechStack(username).items())[:5])
+        summary = generate_professional_summary(username, user_data, languages, repos)
+        return jsonify({"summary": summary})
+    except Exception as e:
+        print(f"Error generating summary: {e}")
+        return jsonify({"summary": "Summary unavailable."}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
