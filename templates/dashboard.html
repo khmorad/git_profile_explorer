@@ -44,9 +44,10 @@ href="{{ url_for('static', filename='button.css') }}"
           <button class="hamburger"><i class="fa-solid fa-bars"></i></button>
         </div>
       </div>
-    </nav>
-    <div class="app-container">
-      <!-- Sidebar -->
+      <div class="user-info">
+        <h2 class="name">{{ user_data.name }}</h2>
+        <p class="username">@{{ user_data.username }}</p>
+        <p class="bio">{{ user_data.bio if user_data.bio else user_data.username + ' has no bio' }}</p>
 
       {% if user_data %}
       <aside class="sidebar">
@@ -93,137 +94,13 @@ href="{{ url_for('static', filename='button.css') }}"
           </div>
          
         </div>
-      </aside>
-      {% endif %}
-      <!-- Main Dashboard -->
-      <main class="main">
-        <header>
-          
-          <form method="POST">
-            <input
-              type="text"
-              name="username"
-              placeholder="Enter GitHub username"
-              required
-            />
-
-            <button class="button-64" role="button" type="submit">
-              <span class="text"
-                ><i class="fa-solid fa-magnifying-glass"></i
-              ></span>
-            </button>
-          </form>
-        </header>
-        
-        <div id="loading" style="display: none; text-align: center; margin: 20px;">
-          <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+        {% if profession_summary %}
+        <div class="summary-box">
+          <h3>AI Summary</h3>
+          <p style="font-size: 0.9rem; color: #ccc; line-height: 1.4;">
+            <span id="typed-summary">{{ profession_summary }}</span>
+          </p>
         </div>
-
-        {% if user_data %}
-        <section class="profile-data">
-          <h2>Profile Info</h2>
-          <div class="card-container">
-   
-            <div class="card">
-              <h3>Tech Stack</h3>
-              <div style="width: 220px; height: 220px; margin: auto;">
-                <canvas id="langChart"></canvas>
-              </div>            </div>
-            <div class="card">
-              <h3>Monthly Commits</h3>
-              <canvas id="commitChart" width="400" height="200"></canvas>
-            </div>
-            <div class="card">
-              <h3>Repositories</h3>
-              {% if repos %}
-              <div class="repo-list">
-                <ul class="repo-ul">
-                  {% for repo in repos %}
-                  <li>
-                    <a
-                      href="https://github.com/{{ user_data.username }}/{{ repo }}"
-                      target="_blank"
-                    >
-                      {{ repo }}
-                    </a>
-                  </li>
-                  {% endfor %}
-                </ul>
-              </div>
-              {% else %}
-              <p>No repositories found.</p>
-              {% endif %}
-            </div>
-            <div class="card">
-              <h3>Top Contributors</h3>
-              <ul class="repo-ul">
-                {% for contributor, count in top_contributors %}
-                <li>
-                  <a href="https://github.com/{{ contributor }}" target="_blank">
-                    {{ contributor }} ({{ count }} commits)
-                  </a>
-                </li>
-                {% endfor %}
-              </ul>
-            </div>
-            <div class="card community-health-card">
-              <h3>Community & Project Health</h3>
-              <div class="community-health-grid">
-                <div class="ch-section">
-                  <div class="ch-label"><i class="fa-solid fa-user-group"></i> Followers</div>
-                  <div class="ch-value">
-                    <a href="https://github.com/{{ user_data.username }}?tab=followers" target="_blank">
-                      {{ user_data.followers }}
-                    </a>
-                  </div>
-                </div>
-                <div class="ch-section">
-                  <div class="ch-label"><i class="fa-solid fa-user-plus"></i> Following</div>
-                  <div class="ch-value">
-                    <a href="https://github.com/{{ user_data.username }}?tab=following" target="_blank">
-                      {{ user_data.following }}
-                    </a>
-                  </div>
-                </div>
-                <div class="ch-section">
-                  <div class="ch-label"><i class="fa-solid fa-circle-exclamation"></i> Open Issues</div>
-                  <div class="ch-value">
-                    {{ open_stats.issues }}
-                  </div>
-                </div>
-                <div class="ch-section">
-                  <div class="ch-label"><i class="fa-solid fa-code-pull-request"></i> Open PRs</div>
-                  <div class="ch-value">
-                    {{ open_stats.prs }}
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="card">
-              <h3>Recent Activity</h3>
-              <ul class="repo-ul recent-activity-list">
-                {% for act in recent_activity %}
-                  <li>
-                    <strong>{{ act.type.replace('Event','') }}</strong> in
-                    <a href="https://github.com/{{ act.repo }}" target="_blank">{{ act.repo }}</a>
-                    <br>
-                    <span style="font-size:12px;color:#888;">{{ act.created_at[:10] }}</span>
-                  </li>
-                {% endfor %}
-              </ul>
-            </div>
-            
-            
-            <div class="card">
-              <h3>Open Issues & PRs</h3>
-              <p><strong>Open Issues:</strong> {{ open_stats.issues }}</p>
-              <p><strong>Open Pull Requests:</strong> {{ open_stats.prs }}</p>
-            </div>
-            
-          </div>
-        </section>
-
         {% endif %}
       </main>
     </div>
@@ -273,6 +150,11 @@ href="{{ url_for('static', filename='button.css') }}"
     </script>
 
     </div>
+  </aside>
+  {% endif %}
+  <!-- Main Dashboard -->
+  <main class="main">
+    <header>
 
     {% endif %} 
     
@@ -378,6 +260,31 @@ const commitChart = new Chart(commitCtx, {
 
 </script>
 {% endif %}
+-->
+
+{% if language_timeseries %}
+<script>
+  const ctxNew = document.getElementById('language_timeseries_plot');
+  const plotData = {{ language_timeseries }};
+  const languagePlot = new Chart(ctxNew, {
+    type: 'line',
+    data: plotData,
+    options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Language Timeseries'
+      }
+    }
+  },
+  });
+</script>
+{% endif %}
+
 <script>
   const form = document.querySelector('form');
   const loading = document.getElementById('loading');
@@ -386,5 +293,5 @@ const commitChart = new Chart(commitCtx, {
     loading.style.display = 'block';
   });
 </script>
-  </body>
+</body>
 </html>
