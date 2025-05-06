@@ -69,27 +69,26 @@ href="{{ url_for('static', filename='button.css') }}"
                 <i class="fa-solid fa-location-dot"></i> San Jose State
                 University
               </p>
-              <p>
-                <i class="fa-brands fa-linkedin"></i>
-                <a href="https://linkedin.com/in/kmoradpour" target="_blank"
-                  >in/kmoradpour</a
-                >
-              </p>
+              {% if user_data.blog %}
               <p>
                 <i class="fa-solid fa-link"></i>
-                <a href="https://khashayarmoradpour.com" target="_blank"
-                  >Website</a
-                >
+                <a href="{{ user_data.blog }}" target="_blank">
+                  {{ user_data.blog.replace('https://', '').replace('http://', '') }}
+                </a>
+              </p>
+              {% endif %}
+            </div>
+            <button id="generate-summary-btn" class="button-64" style="margin-top: 10px;">
+              <span class="text"><i class="fa-solid fa-lightbulb"></i></span>
+            </button>
+            
+            <div class="summary-box" style="display: none;" id="summary-box">
+              <h3>AI Summary</h3>
+              <p style="font-size: 0.9rem; color: #0c0b0b; line-height: 1.4;">
+                <span id="typed-summary"></span>
               </p>
             </div>
-            {% if profession_summary %}
-            <div class="summary-box">
-                <h3>AI Summary</h3>
-                <p style="font-size: 0.9rem; color: #0c0b0b; line-height: 1.4;">
-                    <span id="typed-summary">{{ profession_summary }}</span>
-                </p>
-            </div>
-            {% endif %}
+            
           </div>
          
         </div>
@@ -358,6 +357,7 @@ const commitChart = new Chart(commitCtx, {
 {% if user_data and followers is not none and following is not none and open_stats %}
 <script>
   const healthCtx = document.getElementById('healthChart').getContext('2d');
+  
   const healthChart = new Chart(healthCtx, {
     type: 'polarArea',
     data: {
@@ -424,5 +424,40 @@ const commitChart = new Chart(commitCtx, {
     loading.style.display = 'block';
   });
 </script>
+<script>
+  document.getElementById('generate-summary-btn').addEventListener('click', async function () {
+    const summaryBox = document.getElementById('summary-box');
+    const summaryText = document.getElementById('typed-summary');
+    const username = "{{ user_data.username }}";
+  
+    summaryBox.style.display = 'block';
+    summaryText.textContent = "Generating summary...";
+  
+    try {
+      const response = await fetch('/generate_summary', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username })
+      });
+  
+      const data = await response.json();
+  
+      // Animate summary
+      new Typed('#typed-summary', {
+        strings: [data.summary],
+        typeSpeed: 10,
+        backSpeed: 0,
+        loop: false
+      });
+  
+    } catch (error) {
+      summaryText.textContent = "Failed to generate summary.";
+      console.error(error);
+    }
+  });
+  </script>
+  
   </body>
 </html>
