@@ -104,6 +104,8 @@ def get_repo_analysis_data(username):
                                           'watchers_count', 'forks', 'created_at', 'updated_at'])
     df['created_at'] = pd.to_datetime(df['created_at'])
     df = df.set_index("created_at")
+    one_year_ago = pd.Timestamp.today(tz='UTC') - pd.DateOffset(years=1)
+    df = df[df.index >= one_year_ago]
     df['language'] = df['languages_url'].apply(language_proficiency)
 
     # Top 5 languages change overtime
