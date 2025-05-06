@@ -1,463 +1,500 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <title>GitHub Profile Explorer</title>
     <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
+            rel="stylesheet"
+            href="{{ url_for('static', filename='style.css') }}"
     />
     <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='light.css') }}"
-  />
-  <link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='sidebar.css') }}"
-/>
-<link
-rel="stylesheet"
-href="{{ url_for('static', filename='navbar.css') }}"
-/>
-<link
-rel="stylesheet"
-href="{{ url_for('static', filename='button.css') }}"
-/>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+            rel="stylesheet"
+            href="{{ url_for('static', filename='light.css') }}"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
-      rel="stylesheet"
+            rel="stylesheet"
+            href="{{ url_for('static', filename='sidebar.css') }}"
+    />
+    <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='navbar.css') }}"
+    />
+    <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='button.css') }}"
+    />
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+            rel="stylesheet"
     />
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
-  </head>
-  <body class="light">
-    <nav class="navbar">
-      <div class="nav-content">
+</head>
+<body class="light">
+<nav class="navbar">
+    <div class="nav-content">
         <div class="nav-left">
-          <i class="fa-brands fa-github"></i>
-          <span class="nav-title">GitHub Profile Explorer</span>
+            <i class="fa-brands fa-github"></i>
+            <span class="nav-title">GitHub Profile Explorer</span>
         </div>
         <div class="nav-right">
-          <button class="hamburger"><i class="fa-solid fa-bars"></i></button>
+            <button class="hamburger"><i class="fa-solid fa-bars"></i></button>
         </div>
-      </div>
-    </nav>
-    <div class="app-container">
-      <!-- Sidebar -->
+    </div>
+</nav>
+<div class="app-container">
+    <!-- Sidebar -->
 
-      {% if user_data %}
-      <aside class="sidebar">
-        <div class="profile">
-          
-          <div class="profile-pic">
-            <img
-              src="{{ user_data.porfile_pic }}"
-              alt="Avatar"
-              class="avatar"
-            />
-          </div>
-          <div class="user-info">
-            <h2 class="name">{{ user_data.name }}</h2>
-            <p class="username">@{{ user_data.username }}</p>
-            <p class="bio">{{ user_data.bio if user_data.bio else user_data.username + ' has no bio' }}</p>
+    {% if user_data %}
+        <aside class="sidebar">
+            <div class="profile">
 
-            <div class="details">
-              <p>
-                <i class="fa-solid fa-location-dot"></i> San Jose State
-                University
-              </p>
-              {% if user_data.blog %}
-              <p>
-                <i class="fa-solid fa-link"></i>
-                <a href="{{ user_data.blog }}" target="_blank">
-                  {{ user_data.blog.replace('https://', '').replace('http://', '') }}
-                </a>
-              </p>
-              {% endif %}
+                <div class="profile-pic">
+                    <img
+                            src="{{ user_data.porfile_pic }}"
+                            alt="Avatar"
+                            class="avatar"
+                    />
+                </div>
+                <div class="user-info">
+                    <h2 class="name">{{ user_data.name }}</h2>
+                    <p class="username">@{{ user_data.username }}</p>
+                    <p class="bio">{{ user_data.bio if user_data.bio else user_data.username + ' has no bio' }}</p>
+
+                    <div class="details">
+                        <p>
+                            <i class="fa-solid fa-location-dot"></i> San Jose State
+                            University
+                        </p>
+                        {% if user_data.blog %}
+                            <p>
+                                <i class="fa-solid fa-link"></i>
+                                <a href="{{ user_data.blog }}" target="_blank">
+                                    {{ user_data.blog.replace('https://', '').replace('http://', '') }}
+                                </a>
+                            </p>
+                        {% endif %}
+                    </div>
+                    <button id="generate-summary-btn" class="button-64" style="margin-top: 10px;">
+                        <span class="text"><i class="fa-solid fa-lightbulb"></i></span>
+                    </button>
+
+                    <div class="summary-box" style="display: none;" id="summary-box">
+                        <h3>AI Summary</h3>
+                        <p style="font-size: 0.9rem; color: #0c0b0b; line-height: 1.4;">
+                            <span id="typed-summary"></span>
+                        </p>
+                    </div>
+
+                </div>
+
             </div>
-            <button id="generate-summary-btn" class="button-64" style="margin-top: 10px;">
-              <span class="text"><i class="fa-solid fa-lightbulb"></i></span>
-            </button>
-            
-            <div class="summary-box" style="display: none;" id="summary-box">
-              <h3>AI Summary</h3>
-              <p style="font-size: 0.9rem; color: #0c0b0b; line-height: 1.4;">
-                <span id="typed-summary"></span>
-              </p>
-            </div>
-            
-          </div>
-         
-        </div>
-      </aside>
-      {% endif %}
-      <!-- Main Dashboard -->
-      <main class="main">
+        </aside>
+    {% endif %}
+    <!-- Main Dashboard -->
+    <main class="main">
         <header>
-          
-          <form method="POST">
-            <input
-              type="text"
-              name="username"
-              placeholder="Enter GitHub username"
-              required
-            />
 
-            <button class="button-64" role="button" type="submit">
+            <form method="POST">
+                <input
+                        type="text"
+                        name="username"
+                        placeholder="Enter GitHub username"
+                        required
+                />
+
+                <button class="button-64" role="button" type="submit">
               <span class="text"
-                ><i class="fa-solid fa-magnifying-glass"></i
+              ><i class="fa-solid fa-magnifying-glass"></i
               ></span>
-            </button>
-          </form>
+                </button>
+            </form>
         </header>
-        
+
         <div id="loading" style="display: none; text-align: center; margin: 20px;">
-          <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+            <i class="fa-solid fa-spinner fa-spin"></i> Loading...
         </div>
 
         {% if user_data %}
-        <section class="profile-data">
-          <h2>Profile Info</h2>
-          <div class="card-container">
-   
-            <div class="card">
-              <h3>Tech Stack</h3>
-              <div style="width: 220px; height: 220px; margin: auto;">
-                <canvas id="langChart"></canvas>
-              </div>            </div>
-  
-            <div class="card">
-              <h3>Monthly Commits</h3>
-              <canvas id="commitChart" width="400" height="200"></canvas>
-            </div>
-       
-            <div class="card">
-              <h3>Repositories</h3>
-              {% if repos %}
-              <div class="repo-list">
-                <ul class="repo-ul">
-                  {% for repo in repos %}
-                  <li>
-                    <a
-                      href="https://github.com/{{ user_data.username }}/{{ repo }}"
-                      target="_blank"
-                    >
-                      {{ repo }}
-                    </a>
-                  </li>
-                  {% endfor %}
-                </ul>
-              </div>
-              {% else %}
-              <p>No repositories found.</p>
-              {% endif %}
-            </div>
-            <div class="card">
-              <h3>Community & Project</h3>
-              <div style="width: 230px; height: 230px; margin: auto;">
-                <canvas id="healthChart" width="230" height="230"></canvas>
-              </div>
-            </div> 
-            <div class="card">
-              <h3>Top Contributors</h3>
-              <ul class="repo-ul">
-                {% for contributor, count in top_contributors %}
-                <li>
-                  <a href="https://github.com/{{ contributor }}" target="_blank">
-                    {{ contributor }} ({{ count }} commits)
-                  </a>
-                </li>
-                {% endfor %}
-              </ul>
-            </div>
+            <section class="profile-data">
+                <h2>Profile Info</h2>
+                <div class="card-container">
 
-            
-            
-            
-            
-            <div class="card">
-              <h3>Recent Activity</h3>
-              <ul class="repo-ul recent-activity-list">
-                {% for act in recent_activity %}
-                  <li>
-                    <strong>{{ act.type.replace('Event','') }}</strong> in
-                    <a href="https://github.com/{{ act.repo }}" target="_blank">{{ act.repo }}</a>
-                    <br>
-                    <span style="font-size:12px;color:#888;">{{ act.created_at[:10] }}</span>
-                  </li>
-                {% endfor %}
-              </ul>
-            </div>
-            
-            
-            <div class="card">
-              <h3>Open Issues & PRs</h3>
-              <p><strong>Open Issues:</strong> {{ open_stats.issues }}</p>
-              <p><strong>Open Pull Requests:</strong> {{ open_stats.prs }}</p>
-            </div>
-            
-          </div>
-        </section>
+                    <div class="card">
+                        <h3>Tech Stack</h3>
+                        <div style="width: 220px; height: 220px; margin: auto;">
+                            <canvas id="langChart"></canvas>
+                        </div>            </div>
+
+                    <div class="card">
+                        <h3>Monthly Commits</h3>
+                        <canvas id="commitChart" width="400" height="200"></canvas>
+                    </div>
+
+                    <div class="card">
+                        <h3>Language Timeseries</h3>
+                        <canvas id="language-timeseries-plot" width="400" height="200"></canvas>
+                    </div>
+
+                    <div class="card">
+                        <h3>Repositories</h3>
+                        {% if repos %}
+                            <div class="repo-list">
+                                <ul class="repo-ul">
+                                    {% for repo in repos %}
+                                        <li>
+                                            <a
+                                                    href="https://github.com/{{ user_data.username }}/{{ repo }}"
+                                                    target="_blank"
+                                            >
+                                                {{ repo }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% else %}
+                            <p>No repositories found.</p>
+                        {% endif %}
+                    </div>
+                    <div class="card">
+                        <h3>Community & Project</h3>
+                        <div style="width: 230px; height: 230px; margin: auto;">
+                            <canvas id="healthChart" width="230" height="230"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Top Contributors</h3>
+                        <ul class="repo-ul">
+                            {% for contributor, count in top_contributors %}
+                                <li>
+                                    <a href="https://github.com/{{ contributor }}" target="_blank">
+                                        {{ contributor }} ({{ count }} commits)
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+
+
+
+
+                    <div class="card">
+                        <h3>Recent Activity</h3>
+                        <ul class="repo-ul recent-activity-list">
+                            {% for act in recent_activity %}
+                                <li>
+                                    <strong>{{ act.type.replace('Event','') }}</strong> in
+                                    <a href="https://github.com/{{ act.repo }}" target="_blank">{{ act.repo }}</a>
+                                    <br>
+                                    <span style="font-size:12px;color:#888;">{{ act.created_at[:10] }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+
+                    <div class="card">
+                        <h3>Open Issues & PRs</h3>
+                        <p><strong>Open Issues:</strong> {{ open_stats.issues }}</p>
+                        <p><strong>Open Pull Requests:</strong> {{ open_stats.prs }}</p>
+                    </div>
+
+                </div>
+            </section>
 
         {% endif %}
-      </main>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://unpkg.com/github-calendar@2.1.3/dist/github-calendar.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-      const form = document.querySelector('form');
-      const loading = document.getElementById('loading');
-  
-      form.addEventListener('submit', () => {
-          loading.style.display = 'block';
-      });
-  
-      {% if profession_summary %}
-      document.addEventListener('DOMContentLoaded', function() {
-          const typed = new Typed('#typed-summary', {
-              strings: ["{{ profession_summary|replace('\n', '\\n') }}"],
-              typeSpeed: 10,
-              backSpeed: 0,
-              loop: false
-          });
-      });
-      {% endif %}
-  </script>
-    {% if user_data and contribution_data %}
-    <script>
-      const contributionData = {{ contribution_data|tojson }};
-      const calendarContainer = document.querySelector("#github-calendar");
+    </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/github-calendar@2.1.3/dist/github-calendar.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const form = document.querySelector('form');
+    const loading = document.getElementById('loading');
 
-      const contributionsByDate = {};
-      if (contributionData && contributionData.weeks) {
-          contributionData.weeks.forEach(week => {
-              week.contributionDays.forEach(day => {
-                  contributionsByDate[day.date] = day.contributionCount;
-              });
-          });
-      }
+    form.addEventListener('submit', () => {
+        loading.style.display = 'block';
+    });
 
-      GitHubCalendar(calendarContainer, "{{ user_data.username }}", {
-          data: contributionsByDate,
-          tooltips: true,
-          responsive: true,
-          theme: 'dark' 
-      });
-    </script>
-
-    </div>
-
-    {% endif %} 
-    
-    
-    {% if languages %}
-    <script>
-const ctx = document.getElementById('langChart').getContext('2d');
-const langChart = new Chart(ctx, {
-  type: 'doughnut',
-  data: {
-    labels: {{ languages.keys()|list|tojson }},
-    datasets: [{
-      label: 'Repos by Language',
-      data: {{ languages.values()|list|tojson }},
-      backgroundColor: [
-        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
-        '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
-        '#bcbd22', '#17becf'
-      ],
-      borderColor: '#ffffff',
-      borderWidth: 1
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'bottom',
-        labels: {
-          color: '#24292f', // label text color for light background
-          font: {
-            size: 12
-          }
-        }
-      },
-      tooltip: {
-        callbacks: {
-          label: function (context) {
-            const label = context.label || '';
-            const value = context.parsed || 0;
-            return `${label}: ${value.toLocaleString()} lines`;
-          }
-        }
-      }
-    }
-  }
-});
-
-    </script>
+    {% if profession_summary %}
+        document.addEventListener('DOMContentLoaded', function() {
+            const typed = new Typed('#typed-summary', {
+                strings: ["{{ profession_summary|replace('\n', '\\n') }}"],
+                typeSpeed: 10,
+                backSpeed: 0,
+                loop: false
+            });
+        });
     {% endif %}
-    {% if monthly_commits %}
-<script>
-const commitCtx = document.getElementById('commitChart').getContext('2d');
-const commitChart = new Chart(commitCtx, {
-  type: 'bar',
-  data: {
-    labels: {{ monthly_commits.keys()|list|tojson }},
-    datasets: [{
-      label: 'Commits per Month',
-      data: {{ monthly_commits.values()|list|tojson }},
-      backgroundColor: [
-        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
-        '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
-        '#bcbd22', '#17becf', '#ffbb78', '#98df8a'
-      ]
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        labels: {
-          color: '#24292f'
-        }
-      }
-    },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: 'Month',
-          color: '#24292f'
-        },
-        ticks: {
-          color: '#24292f'
-        }
-      },
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'Number of Commits',
-          color: '#24292f'
-        },
-        ticks: {
-          color: '#24292f'
-        }
-      }
-    }
-  }
-});
+</script>
+{% if user_data and contribution_data %}
+    <script>
+        const contributionData = {{ contribution_data|tojson }};
+        const calendarContainer = document.querySelector("#github-calendar");
 
-</script>
-{% if user_data and followers is not none and following is not none and open_stats %}
-<script>
-  const healthCtx = document.getElementById('healthChart').getContext('2d');
-  
-  const healthChart = new Chart(healthCtx, {
-    type: 'polarArea',
-    data: {
-      labels: ['Followers', 'Following', 'Open Issues', 'Open PRs'],
-      datasets: [{
-        label: 'Community Health Stats',
-        data: [
-          {{ followers }},
-          {{ following }},
-          {{ open_stats.issues }},
-          {{ open_stats.prs }}
-        ],
-        backgroundColor: [
-          '#1f77b4',
-          '#2ca02c',
-          '#ff7f0e',
-          '#d62728'
-        ],
-        borderColor: '#fff',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-  legend: {
-    position: 'bottom',  // ⬅ move legend to the bottom
-    labels: {
-      color: '#24292f',
-      font: {
-        size: 12
-      }
-    }
-  }
-}
-,
-      scales: {
-        r: {
-          ticks: {
-            color: '#24292f'
-          },
-          grid: {
-            color: '#ccc'
-          },
-          angleLines: {
-            color: '#ccc'
-          },
-          pointLabels: {
-            color: '#24292f'
-          }
+        const contributionsByDate = {};
+        if (contributionData && contributionData.weeks) {
+            contributionData.weeks.forEach(week => {
+                week.contributionDays.forEach(day => {
+                    contributionsByDate[day.date] = day.contributionCount;
+                });
+            });
         }
-      }
-    }
-  });
-</script>
-{% endif %}
+
+        GitHubCalendar(calendarContainer, "{{ user_data.username }}", {
+            data: contributionsByDate,
+            tooltips: true,
+            responsive: true,
+            theme: 'dark'
+        });
+    </script>
+
+    </div>
 
 {% endif %}
-<script>
-  const form = document.querySelector('form');
-  const loading = document.getElementById('loading');
 
-  form.addEventListener('submit', () => {
-    loading.style.display = 'block';
-  });
+
+{% if languages %}
+    <script>
+        const ctx = document.getElementById('langChart').getContext('2d');
+        const langChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: {{ languages.keys()|list|tojson }},
+                datasets: [{
+                    label: 'Repos by Language',
+                    data: {{ languages.values()|list|tojson }},
+                    backgroundColor: [
+                        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
+                        '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
+                        '#bcbd22', '#17becf'
+                    ],
+                    borderColor: '#ffffff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            color: '#24292f', // label text color for light background
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                return `${label}: ${value.toLocaleString()} lines`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+{% endif %}
+{% if monthly_commits %}
+    <script>
+        const commitCtx = document.getElementById('commitChart').getContext('2d');
+        const commitChart = new Chart(commitCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ monthly_commits.keys()|list|tojson }},
+                datasets: [{
+                    label: 'Commits per Month',
+                    data: {{ monthly_commits.values()|list|tojson }},
+                    backgroundColor: [
+                        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
+                        '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
+                        '#bcbd22', '#17becf', '#ffbb78', '#98df8a'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#24292f'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month',
+                            color: '#24292f'
+                        },
+                        ticks: {
+                            color: '#24292f'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Commits',
+                            color: '#24292f'
+                        },
+                        ticks: {
+                            color: '#24292f'
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+    {% if user_data and followers is not none and following is not none and open_stats %}
+        <script>
+            const healthCtx = document.getElementById('healthChart').getContext('2d');
+
+            const healthChart = new Chart(healthCtx, {
+                type: 'polarArea',
+                data: {
+                    labels: ['Followers', 'Following', 'Open Issues', 'Open PRs'],
+                    datasets: [{
+                        label: 'Community Health Stats',
+                        data: [
+                            {{ followers }},
+                            {{ following }},
+                            {{ open_stats.issues }},
+                            {{ open_stats.prs }}
+                        ],
+                        backgroundColor: [
+                            '#1f77b4',
+                            '#2ca02c',
+                            '#ff7f0e',
+                            '#d62728'
+                        ],
+                        borderColor: '#fff',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',  // ⬅ move legend to the bottom
+                            labels: {
+                                color: '#24292f',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                    ,
+                    scales: {
+                        r: {
+                            ticks: {
+                                color: '#24292f'
+                            },
+                            grid: {
+                                color: '#ccc'
+                            },
+                            angleLines: {
+                                color: '#ccc'
+                            },
+                            pointLabels: {
+                                color: '#24292f'
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+    {% endif %}
+
+{% endif %}
+<script>
+    const form = document.querySelector('form');
+    const loading = document.getElementById('loading');
+
+    form.addEventListener('submit', () => {
+        loading.style.display = 'block';
+    });
 </script>
 <script>
-  document.getElementById('generate-summary-btn').addEventListener('click', async function () {
-    const summaryBox = document.getElementById('summary-box');
-    const summaryText = document.getElementById('typed-summary');
-    const username = "{{ user_data.username }}";
-  
-    summaryBox.style.display = 'block';
-    summaryText.textContent = "Generating summary...";
-  
-    try {
-      const response = await fetch('/generate_summary', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username })
-      });
-  
-      const data = await response.json();
-  
-      // Animate summary
-      new Typed('#typed-summary', {
-        strings: [data.summary],
-        typeSpeed: 10,
-        backSpeed: 0,
-        loop: false
-      });
-  
-    } catch (error) {
-      summaryText.textContent = "Failed to generate summary.";
-      console.error(error);
-    }
-  });
-  </script>
-  
-  </body>
+    document.getElementById('generate-summary-btn').addEventListener('click', async function () {
+        const summaryBox = document.getElementById('summary-box');
+        const summaryText = document.getElementById('typed-summary');
+        const username = "{{ user_data.username }}";
+
+        summaryBox.style.display = 'block';
+        summaryText.textContent = "Generating summary...";
+
+        try {
+            const response = await fetch('/generate_summary', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username })
+            });
+
+            const data = await response.json();
+
+            // Animate summary
+            new Typed('#typed-summary', {
+                strings: [data.summary],
+                typeSpeed: 10,
+                backSpeed: 0,
+                loop: false
+            });
+
+        } catch (error) {
+            summaryText.textContent = "Failed to generate summary.";
+            console.error(error);
+        }
+    });
+</script>
+{% if language_data %}
+    <script>
+        const languageTSCtx = document.getElementById('language-timeseries-plot').getContext('2d');
+        const languageTSChart = new Chart(languageTSCtx, {
+            type: 'line',
+            data: {
+                labels: {{ language_data.index | tojson }},
+                datasets: [
+                    {% for lang, values in language_data.items() if lang != 'index' %}
+                        {
+                            label: "{{ lang }}",
+                            data: {{ values | tojson }},
+                            fill: false,
+                            borderColor: '{{ ['red', 'blue', 'green', 'orange', 'purple'][loop.index0 % 5] }}',
+                            tension: 0.1,
+                            spanGaps: true
+                        },
+                    {% endfor %}
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#24292f'
+                        }
+                    }
+                },
+            }
+        });
+    </script>
+{% endif %}
+</body>
 </html>
