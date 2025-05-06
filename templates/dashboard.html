@@ -182,7 +182,7 @@
 
 
 
-
+                    {% if recent_activity %}
                     <div class="card">
                         <h3>Recent Activity</h3>
                         <ul class="repo-ul recent-activity-list">
@@ -196,13 +196,10 @@
                             {% endfor %}
                         </ul>
                     </div>
+                    {% endif %}
 
 
-                    <div class="card">
-                        <h3>Open Issues & PRs</h3>
-                        <p><strong>Open Issues:</strong> {{ open_stats.issues }}</p>
-                        <p><strong>Open Pull Requests:</strong> {{ open_stats.prs }}</p>
-                    </div>
+
 
                 </div>
             </section>

@@ -1,5 +1,5 @@
 .sidebar {
-  min-width: 100px;
+  min-width: 300px;
   max-width: 300px;
   background-color: #ffffff;
   color: #24292f;
@@ -8,7 +8,9 @@
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   z-index: 1;
 }
-
+.summary-box {
+  max-width: 300px;
+}
 .sidebar h2.username {
   color: #861414;
   margin-bottom: 20px;
