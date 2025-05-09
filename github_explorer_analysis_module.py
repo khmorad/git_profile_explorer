@@ -1,12 +1,10 @@
 import requests as r
 import numpy as np
 import matplotlib.pyplot as plt
-import json
 import pandas as pd
 import datetime
 import os
 from functools import lru_cache
-from flask import session
 from dotenv import load_dotenv
 
 load_dotenv('.env')
@@ -54,7 +52,6 @@ def count_recently_updated_repo(data: list):
     recent_range = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=30)  # Mark recent as 30 days range
     count = 0
     for repo in data:
-        # Count number of date time
         if pd.to_datetime(repo['updated_at'], utc=True) > recent_range:
             count += 1
     return count

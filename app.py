@@ -2,10 +2,7 @@ from flask import Flask, render_template, request
 import requests
 from dotenv import load_dotenv
 import os
-from functools import lru_cache
-from datetime import datetime, timedelta
 import openai
-import traceback
 from helpers import (
     get_recent_activity,
     get_open_issues_prs,
@@ -13,8 +10,9 @@ from helpers import (
     get_monthly_commits,
     get_top_contributors,
     show_users_repo_names,
-    generate_professional_summary
 )
+from ai_summary import generate_professional_summary
+
 import github_explorer_analysis_module as analysis
 
 load_dotenv()
