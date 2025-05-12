@@ -138,7 +138,14 @@
                         <h3>Language Timeseries</h3>
                         <canvas id="language-timeseries-plot" width="400" height="200"></canvas>
                     </div>
-
+{% if social_engagement %}
+<div class="card">
+    <h3>Repo Engagement Scores</h3>
+    <div style="width: 250px; height: 250px; margin: auto;">
+        <canvas id="engagementChart" width="280" height="280"></canvas>
+    </div>
+</div>
+{% endif %}
                     <div class="card">
                         <h3>Repositories</h3>
                         {% if repos %}
@@ -418,6 +425,49 @@
     {% endif %}
 
 {% endif %}
+{% if social_engagement %}
+<script>
+    const engagementCtx = document.getElementById('engagementChart').getContext('2d');
+    const engagementChart = new Chart(engagementCtx, {
+        type: 'radar',  // or 'bar' for stacked bar
+        data: {
+            labels: {{ social_engagement.keys()|list|tojson }},
+            datasets: [{
+                label: 'Engagement Score',
+                data: {{ social_engagement.values()|list|tojson }},
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#24292f',
+                        font: { size: 12 }
+                    }
+                }
+            },
+            scales: {
+                r: {
+                    angleLines: { display: true },
+                                ticks: {
+                display: false  // 👈 This hides the radial numbers
+            },
+                    suggestedMin: 0,
+                    suggestedMax: 1,
+                   
+                    pointLabels: { color: '#24292f' }
+                }
+            }
+        }
+    });
+</script>
+{% endif %}
+
 <script>
     const form = document.querySelector('form');
     const loading = document.getElementById('loading');

@@ -128,8 +128,6 @@ def get_user_social_engagement_metadata(username):
     repos_json = get_all_repo_metadata(username)
     repo_count = len(repos_json)
     metrics = {
-        'personal_readme_available': 0,
-        'public_repo_count': 0,
         'repo_has_readme': 0,
         'stargazed_repo': 0,
         'forked_repo': 0,
@@ -140,11 +138,6 @@ def get_user_social_engagement_metadata(username):
     for repo in repos_json:
 
         name = repo['name']
-        if name == username:
-            metrics['personal_readme_available'] = 1
-
-        if not repo.get('private', True):
-            metrics['public_repo_count'] += 1
 
         readme_data = get_function(f"{repo_url}repos/{username}/{name}/contents/README.md")
         if readme_data and isinstance(readme_data, dict) and readme_data.get('type') == 'file':
