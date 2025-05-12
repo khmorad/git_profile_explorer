@@ -39,7 +39,7 @@ def dashboard():
     language_data = None
     recent_activity = []
     open_stats = {"issues": 0, "prs": 0}
-
+    social_engagement = {} 
     if request.method == 'POST':
         username = request.form['username']
         user_info_url = f"https://api.github.com/users/{username}"
@@ -96,6 +96,11 @@ def dashboard():
                 language_data = analysis.get_repo_analysis_data(username)
             except Exception as e:
                 print(f"Error while getting repo language analysis: {e}")
+            try:
+                social_engagement = analysis.get_user_social_engagement_metadata(username)
+            except Exception as e:
+                print(f"Error getting social engagement metadata: {e}")
+                social_engagement = {}
         except Exception as e:
             print(f"Error fetching user info for {username}: {e}")
             user_data = {"username": username, "name": "Not Found"}
@@ -113,7 +118,8 @@ def dashboard():
         following=following,
         recent_activity=recent_activity,
         open_stats=open_stats,
-        language_data=language_data
+        language_data=language_data,
+        social_engagement=social_engagement
     )
 from flask import jsonify
 
