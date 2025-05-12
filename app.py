@@ -11,6 +11,8 @@ from helpers import (
     get_top_contributors,
     show_users_repo_names,
 )
+from functools import lru_cache
+
 from ai_summary import generate_professional_summary
 
 import github_explorer_analysis_module as analysis
@@ -115,6 +117,8 @@ def dashboard():
     )
 from flask import jsonify
 
+
+@lru_cache(maxsize=256)
 @app.route('/generate_summary', methods=['POST'])
 def generate_summary():
     data = request.get_json()

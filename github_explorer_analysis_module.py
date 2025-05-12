@@ -122,3 +122,45 @@ def get_repo_analysis_data(username):
     for col in time_series_data.columns:
         output_dict[col] = time_series_data[col].tolist()
     return output_dict
+
+@lru_cache(maxsize=256)
+def get_user_social_engagement_metadata(username):
+    repos_json = get_all_repo_metadata(username)
+    repo_count = len(repos_json)
+    metrics = {
+        'personal_readme_available': 0,
+        'public_repo_count': 0,
+        'repo_has_readme': 0,
+        'stargazed_repo': 0,
+        'forked_repo': 0,
+        'has_contributors': 0,
+        'has_watchers': 0
+    }
+
+    for repo in repos_json:
+
+        name = repo['name']
+        if name == username:
+            metrics['personal_readme_available'] = 1
+
+        if not repo.get('private', True):
+            metrics['public_repo_count'] += 1
+
+        readme_data = get_function(f"{repo_url}repos/{username}/{name}/contents/README.md")
+        if readme_data and isinstance(readme_data, dict) and readme_data.get('type') == 'file':
+            metrics['repo_has_readme'] += 1 / repo_count
+
+        if int(repo.get('stargazers_count', 0)) > 0:
+            metrics['stargazed_repo'] += 1 / repo_count
+
+        if int(repo.get('forks', 0)) > 0:
+            metrics['forked_repo'] += 1 / repo_count
+
+        contributors = get_function(f"{repo_url}repos/{username}/{name}/contributors")
+        if contributors and isinstance(contributors, list) and len(contributors) > 2:
+            metrics['has_contributors'] += 1 / repo_count
+
+        if int(repo.get('watcher_count', 0)) > 0:
+            metrics['has_watchers'] += 1 / repo_count
+
+    return metrics
