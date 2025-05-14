@@ -27,7 +27,52 @@ Web-scraped content like contribution graphs and activity feeds offers further i
 - Scrape additional details such as the contribution graph and pinned repositories.
 - Display user profile info and repositories with sorting/filtering options.
 - Build modular Python scripts to handle API calls, scraping, and template rendering.
+------------------------------------------------------------
 
+## Project Outline / Plan
+
+- Use Flask to build the backend and serve dynamic HTML templates.
+- Fetch public GitHub user data using the GitHub REST API.
+- Scrape additional user details not accessible through the API.
+- Display fetched data with sort/filter options.
+- Modularize scripts for clean architecture: API, scraping, rendering, etc.
+
+------------------------------------------------------------
+
+## Running the Flask App
+
+Follow these steps to run the Flask application locally:
+
+1. Install Dependencies
+
+Make sure Python and pip are installed. Then run:
+
+    pip install -r requirements.txt
+
+2. Create .env File
+
+In the project root directory, create a file named `.env` with the following content:
+
+    # .env
+
+    # GitHub API Token (Required)
+    git_hub_project=token ghp_Yu...
+
+    # OpenAI API Key (Optional)
+    OPENAI_API_KEY=your_openai_api_key_here
+
+Note: Replace `ghp_Yu...` with your actual GitHub token.  
+Replace `your_openai_api_key_here` with your OpenAI key if applicable.
+
+3. Run the App
+
+Start the Flask server by running:
+
+    python app.py
+
+Then visit http://127.0.0.1:5000 in your browser.
+
+------------------------------------------------------------
 ## Interface Plan
 
 The application uses Flask to provide a clean and responsive web interface. It includes:
